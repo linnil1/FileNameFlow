@@ -1,0 +1,27 @@
+name: Test and Deploy document
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+      - name: Install packages for testing
+        run: pip install pytest pycodestyle mypy
+      - name: Install this package
+        run: pip install .
+      - name: Test code logic
+        run: pytest
+      - name: Test code style
+        run: pycodestyle namepipe
+      - name: Test code typing
+        run: mypy namepipe
+      - name: Install packages for deploying documentation on web
+        run: pip install mkdocs-material mkdocstrings[python]
+      - name: Deploy on github web
+        run: mkdocs gh-deploy --force
