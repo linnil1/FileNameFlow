@@ -86,7 +86,7 @@ class NameTask:
               run(f"cat {input_name}.txt > {input_name}.add_{index}.txt")
               run(f"echo {index} >> {input_name}.add_{index}.txt")
               return input_name + f".add_{index}"
-          
+
           "./test.{}" >> func_need_args.set_args(index="indexname")
           ```
 
@@ -110,7 +110,7 @@ class NameTask:
           def func_merge_samples(input_name):
               files = [i + ".txt" for i in input_name.get_input_names()]
               return input_name.replace_wildcard("_merge")
-          
+
           "./test.{}" >> func_merge_samples.set_depended(-1)
           ```
 
@@ -155,7 +155,7 @@ def nt(func):
       def doSomething(input_name):
           ...
           return input_name + ".test"
-      
+
       "" >> doSomething
       ```
     """

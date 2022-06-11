@@ -11,7 +11,7 @@ setuptools.setup(
     description="A name-based pipeline",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/linnil1/NamePipe",
+    url="https://github.com/linnil1/name-based-pipeline",
     packages=setuptools.find_packages(),
     install_requires=[
         "parse",
