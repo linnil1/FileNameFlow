@@ -69,7 +69,7 @@ class NameTask:
         """ Deep copy the instance """
         return copy.deepcopy(self)
 
-    def set_args(self, *args, **kwargs) -> NameTask:
+    def __call__(self, *args, **kwargs) -> NameTask:
         """
         Set arguments for main function
 
@@ -88,7 +88,7 @@ class NameTask:
               run(f"echo {index} >> {input_name}.add_{index}.txt")
               return input_name + f".add_{index}"
 
-          "./test.{}" >> func_need_args.set_args(index="indexname")
+          "./test.{}" >> func_need_args(index="indexname")
           ```
 
         Return:
@@ -100,6 +100,10 @@ class NameTask:
         task.func_args = args
         task.func_kwargs = kwargs
         return task
+
+    def set_args(self, *args, **kwargs) -> NameTask:
+        """ Deprecated: see __call__ method """
+        return self.__call__(*args, **kwargs)
 
     def set_depended(self, pos: int | list[int]) -> NameTask:
         """

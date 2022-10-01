@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import shutil
 import logging
 
-from namepipe import NamePath, NameTask, compose
+from namepipe import NamePath, NameTask, compose, nt
 from namepipe.error import NamePipeError
 logging.basicConfig(level=logging.DEBUG)
 
@@ -154,6 +154,26 @@ class TestTask(unittest.TestCase):
         Path(f"{tmp_dir}/test.1.test2.a.txt").touch()
         Path(f"{tmp_dir}/test.1.test2.b.txt.ga").touch()
         tmp_dir + "/test.{}.test2.{}" >> NameTask(func=lambda i: i.replace_wildcard("_merge") + ".123").set_depended(-1) >> (tmp_dir + "/test.{}.test2_merge.123")
+
+    def test_args(self):
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.0.txt").touch()
+        Path(f"{tmp_dir}/test.1.txt").touch()
+        task_args = NameTask(func=lambda i, j: i + "." + j)
+        task_args1 = task_args("a")
+        tmp_dir + "/test.{}" >> task_args1 >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_args("b") >> tmp_dir + "/test.{}.b"
+        tmp_dir + "/test.{}" >> task_args1 >> tmp_dir + "/test.{}.a"
+
+        @nt
+        def task_kwarg(i, index="123"):
+            return i + "." + index
+        task_kwarg1 = task_kwarg.set_args(index="a")
+
+        tmp_dir + "/test.{}" >> task_kwarg1 >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_kwarg(index="b") >> tmp_dir + "/test.{}.b"
+        tmp_dir + "/test.{}" >> task_kwarg1 >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_kwarg  >> tmp_dir + "/test.{}.123"
 
     def test_compose(self):
         tmp_dir = self.tmp_dir
