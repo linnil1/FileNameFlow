@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import shutil
 import logging
 
-from namepipe import NamePath, NameTask
+from namepipe import NamePath, NameTask, compose
 from namepipe.error import NamePipeError
 logging.basicConfig(level=logging.DEBUG)
 
@@ -121,11 +121,17 @@ class TestTask(unittest.TestCase):
         Path(f"{self.tmp_dir}/test3.txt").touch()
         tmp_dir >> NameTask(func=lambda i: i + "/test3") >> NameTask(func=lambda i: i + ".test4") >> tmp_dir + "/test3.test4"
 
+        # assert the result name
         with self.assertRaises(NamePipeError):
             None >> NameTask(func=lambda i: "test/test4") >> "test/test5"
 
+        # input name not found
         with self.assertRaises(NamePipeError):
             "test1231" >> NameTask(func=lambda i: "test/test4") >> "test/test5"
+
+        # Task did not run
+        with self.assertRaises(NamePipeError):
+            NameTask(func=lambda i: "test/test4") >> "test/test5"
 
     def test_map(self):
         tmp_dir = self.tmp_dir
@@ -148,3 +154,17 @@ class TestTask(unittest.TestCase):
         Path(f"{tmp_dir}/test.1.test2.a.txt").touch()
         Path(f"{tmp_dir}/test.1.test2.b.txt.ga").touch()
         tmp_dir + "/test.{}.test2.{}" >> NameTask(func=lambda i: i.replace_wildcard("_merge") + ".123").set_depended(-1) >> (tmp_dir + "/test.{}.test2_merge.123")
+
+    def test_compose(self):
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.1.txt").touch()
+        Path(f"{tmp_dir}/test.2.txt").touch()
+        Path(f"{tmp_dir}/test.2.a.txt").touch()
+
+        task11 = compose([None, NameTask(func=lambda i: tmp_dir + "/test.{}"), tmp_dir + "/test.{}"])
+        task12 = compose([task11, tmp_dir + "/test.{}"])
+
+        task21 = compose([tmp_dir + "/test.{}"])
+        task22 = compose([NameTask(func=lambda i: i + ".a")])
+        task23 = task21 >> task22 >> tmp_dir + "/test.{}.a"
+        task24 = compose([task21, task22, tmp_dir + "/test.{}.a"])

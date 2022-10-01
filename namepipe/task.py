@@ -1,6 +1,7 @@
 from __future__ import annotations
 import copy
 import logging
+from typing import Iterable, Any
 
 from .path import NamePath
 from .error import *
@@ -160,3 +161,41 @@ def nt(func):
       ```
     """
     return NameTask(func=func)
+
+
+def compose(func_list: Iterable[NameTask | NamePath | str | None]) -> NameTask | NamePath:
+    """
+    A compose way to execute the task
+
+    Example:
+      ``` python
+      from namepipe import compose
+
+      # equivalent to task1 = "" >> doSomething >> doSomething2
+      task1 = compose([
+          "", doSomething, doSomething2
+      ])
+      # equivalent to task1 >> doSomething3
+      task2 = comppse([
+          task1 , doSomething3
+      ])
+    """
+    # run all task
+    current_item = None
+    num_item = 0
+    for item in func_list:
+        if not num_item:
+            current_item = item
+        else:
+            current_item = current_item >> item  # type: ignore
+        num_item += 1
+    if isinstance(current_item, NameTask):
+        return current_item
+
+    # special case: only one item
+    assert num_item == 1
+    if isinstance(item, (NamePath, str)):
+        return NamePath(item)
+    elif item is None:
+        return NamePath("")
+    raise NotImplementedError
