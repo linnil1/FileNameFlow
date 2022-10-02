@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import shutil
 import logging
 
-from namepipe import NamePath, NameTask, compose, nt
+from namepipe import NamePath, NameTask, compose
 from namepipe.error import NamePipeError
 logging.basicConfig(level=logging.DEBUG)
 
@@ -104,6 +104,12 @@ class TestPath(unittest.TestCase):
             self.assertEqual(i.template_args[0], i.template_args[1])
 
 
+def subtask(input_name):
+    Path(f"{input_name}.test2.a.txt").touch()
+    Path(f"{input_name}.test2.b.txt").touch()
+    return input_name + ".test2.{}"
+
+
 class TestTask(unittest.TestCase):
     def setUp(self):
         self.tmp_dir = tmp_dir = "/tmp/test"
@@ -145,7 +151,25 @@ class TestTask(unittest.TestCase):
         a = tmp_dir + "/test.{}" >> NameTask(func=lambda i: i + ".test2")
         a >> NameTask(func=lambda i: i + ".{}") >> (tmp_dir + "/test.{}.test2.{}")
         a >> NameTask(func=lambda i: i + ".{}.txt") >> (tmp_dir + "/test.{}.test2.{}.txt")
-    
+
+    def test_base_executor(self):
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.0.txt").touch()
+        Path(f"{tmp_dir}/test.1.txt").touch()
+        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        self.assertEqual(len(list(Path(tmp_dir).iterdir())), 2 + 4)
+
+    def test_concurrent(self):
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.0.txt").touch()
+        Path(f"{tmp_dir}/test.1.txt").touch()
+
+        from namepipe.executor import BaseTaskExecutor, ConcurrentTaskExecutor
+        NameTask.default_executor = ConcurrentTaskExecutor()
+        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        self.assertEqual(len(list(Path(tmp_dir).iterdir())), 2 + 4)
+        NameTask.default_executor = BaseTaskExecutor()
+
     def test_merge(self):
         tmp_dir = self.tmp_dir
         Path(f"{tmp_dir}/test.0.test2.a.txt").touch()
@@ -165,9 +189,9 @@ class TestTask(unittest.TestCase):
         tmp_dir + "/test.{}" >> task_args("b") >> tmp_dir + "/test.{}.b"
         tmp_dir + "/test.{}" >> task_args1 >> tmp_dir + "/test.{}.a"
 
-        @nt
-        def task_kwarg(i, index="123"):
-            return i + "." + index
+        def task_kwarg(input_name, index="123"):
+            return input_name + "." + index
+        task_kwarg = NameTask(func=task_kwarg)
         task_kwarg1 = task_kwarg.set_args(index="a")
 
         tmp_dir + "/test.{}" >> task_kwarg1 >> tmp_dir + "/test.{}.a"

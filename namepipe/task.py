@@ -3,6 +3,7 @@ import copy
 import logging
 from typing import Iterable, Any
 
+from .executor import BaseTaskExecutor
 from .path import NamePath
 from .error import *
 
@@ -10,12 +11,14 @@ from .error import *
 class NameTask:
     """ Task class that interact with NamePath """
     logger = logging.getLogger(__name__)
+    default_executor = BaseTaskExecutor()
 
     def __init__(self, func=None):
         self.func = func
         self.func_args = ()
         self.func_kwargs = {}
         self.depended_pos = []
+        self.executor = None
 
         # each instance
         self.input_name = None
@@ -33,19 +36,24 @@ class NameTask:
         """
         Main function to excute the function
         """
+        # init
+        if self.executor is None:
+            self.executor = self.default_executor
         self.logger.info(f"Init func={self.func.__name__} input={input_name}")
-        self.input_name = input_name
-        output_name = None
+        self.input_name = self.executor.pre_task(input_name)
 
         # list names
         names = input_name.get_input_names(self.depended_pos)
         if len(names) == 0:
             raise NamePipeDataError(f"No input files glob by {input_name}")
 
-        # TODO: concurrent
-        for name in names:
-            self.logger.info(f"Run  func={self.func.__name__} {name=}")
-            return_name = self.func(name, *self.func_args, **self.func_kwargs)
+        # main
+        return_names = self.executor.run_tasks(names, self.func,
+                                               self.func_args, self.func_kwargs)
+
+        # merge return name
+        output_name = None
+        for return_name in return_names:
             if isinstance(return_name, NamePath):
                 new_name = return_name.template
             else:
@@ -57,11 +65,12 @@ class NameTask:
                                         f"{output_name} and {new_name}")
             # TODO: check output files is existed
 
-        # save output
+        # output_name = return_name
         if output_name is None:
-            raise NamePipeDataError(f"No function been executed or return None"
+            raise NamePipeDataError(f"No function been executed or function return None"
                                     f" : {repr(self)}")
         self.output_name = NamePath(str(output_name))  # clean up args
+        self.output_name = self.executor.post_task(self.output_name)
         self.logger.info(f"Done func={self.func.__name__} output={self.output_name}")
         return self
 
@@ -127,6 +136,16 @@ class NameTask:
             task.depended_pos = [pos]
         else:
             task.depended_pos = pos
+        return task
+
+    def set_executor(self, executor: BaseTaskExecutor):
+        """
+        Set executor for this task.
+
+        See executor.BaseTaskExecutor for the implementation of executor.
+        """
+        task = self.copy()
+        task.executor = executor
         return task
 
     def __rrshift__(self, others) -> NameTask:
