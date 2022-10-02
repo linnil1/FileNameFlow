@@ -26,3 +26,4 @@ https://linnil1.github.io/name-based-pipeline
 ::: namepipe.error
 ::: namepipe.path
 ::: namepipe.task
+::: namepipe.executor

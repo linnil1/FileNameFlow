@@ -3,7 +3,7 @@ import logging
 import subprocess
 from pathlib import Path
 
-from namepipe import nt
+from namepipe import nt, NameTask
 # Debug info
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -21,7 +21,6 @@ def checkExist(name):
     assert Path(name).exists()
 
 
-@nt
 def createFastq(input_name):
     """ 0 -> many """
     input_name = os.path.join(input_name, "test")  # type: str
@@ -36,7 +35,6 @@ def createFastq(input_name):
     return input_name + ".{}.read"
 
 
-@nt
 def createBwaIndex(input_name):
     """ 0 -> 1 """
     output_file = os.path.join(input_name, "bwa")
@@ -46,7 +44,6 @@ def createBwaIndex(input_name):
     return output_file
 
 
-@nt
 def bwa(input_name, index):
     """ 1 -> 1 """
     index = str(index)
@@ -66,7 +63,6 @@ def bwa(input_name, index):
     return output_name
 
 
-@nt
 def extractChr(input_name):
     """
     few -> many
@@ -85,7 +81,6 @@ def extractChr(input_name):
     return output_name
 
 
-@nt
 def statChr(input_name):
     """ 1 -> 1 """
     checkExist(f"{input_name}.bam")
@@ -98,7 +93,6 @@ def statChr(input_name):
     return output_name.template
 
 
-@nt
 def mergeChr(input_name):
     """
     many -> fewer
@@ -115,7 +109,6 @@ def mergeChr(input_name):
     return output_name
 
 
-@nt
 def mergeStat(input_name):
     """
     many -> 1
@@ -131,7 +124,6 @@ def mergeStat(input_name):
     return output_name
 
 
-@nt
 def create_folder(input_name, folder):
     """ 0 -> 1 """
     Path(folder).mkdir(exist_ok=True)
@@ -140,7 +132,6 @@ def create_folder(input_name, folder):
     return folder
 
 
-@nt
 def rename(input_name):
     """
     many to many
@@ -159,7 +150,6 @@ def rename(input_name):
     return output_name
 
 
-@nt
 def renameSwap(input_name):
     """
     1 to 1
@@ -176,17 +166,21 @@ def renameSwap(input_name):
     return output_name
 
 
-# 0 -> 1 -> 1
-bwa_index = None >> create_folder.set_args(folder="index") >> createBwaIndex >> "index/bwa"
-print(bwa_index)
+if __name__ == "__main__":
+    from namepipe.executor import ConcurrentTaskExecutor
+    NameTask.default_executor = ConcurrentTaskExecutor()
 
-# 0 -> many -> (for each) 1 -> 1
-bwa_data = "." >> create_folder.set_args(folder="data") >> createFastq >> bwa.set_args(index=bwa_index)
-bwa_stat = bwa_data >> extractChr >> statChr >> rename.set_depended([0, 1])
-print(bwa_stat)
+    # 0 -> 1 -> 1
+    bwa_index = None >> NameTask(create_folder)(folder="index") >> createBwaIndex >> "index/bwa"
+    print(bwa_index)
 
-# result and swap_result is basically the same but use different strucutre
-result = bwa_stat >> mergeChr.set_depended(-1) >> mergeStat.set_depended(-1)
-print(result)
-swap_result = bwa_stat >> renameSwap >> mergeChr.set_depended(0) >> mergeStat.set_depended(0)
-print(swap_result)
+    # 0 -> many -> (for each) 1 -> 1
+    bwa_data = "." >> NameTask(create_folder)(folder="data") >> NameTask(createFastq) >> NameTask(bwa)(index=bwa_index)
+    bwa_stat = bwa_data >> extractChr >> statChr >> NameTask(rename).set_depended([0, 1])
+    print(bwa_stat)
+
+    # result and swap_result is basically the same but use different strucutre
+    result = bwa_stat >> NameTask(mergeChr).set_depended(-1) >> NameTask(mergeStat).set_depended(-1)
+    print(result)
+    swap_result = bwa_stat >> NameTask(renameSwap) >> NameTask(mergeChr).set_depended(0) >> NameTask(mergeStat).set_depended(0)
+    print(swap_result)

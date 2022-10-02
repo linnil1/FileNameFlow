@@ -4,6 +4,7 @@ class NamePipeError(Exception):
 
 
 class NamePipeDataError(NamePipeError):
+    """ Raise this when the name-based concept cannot work """
     pass
 
 

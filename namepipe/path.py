@@ -21,10 +21,11 @@ class NamePath(str):
 
     NamePath is inherited from str, so all str methods can works.
     """
+
     logger = logging.getLogger(__name__)
     suffix_key = "namepipe_catch_suffix"
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         """
         We use `template` and `template_args` to store the information
         before `construct_name()`
@@ -49,14 +50,14 @@ class NamePath(str):
 
         # we didn't extract {} from name when init
         self.template = str(self)
-        self.template_args = ()
-        self.template_kwargs = {}
+        self.template_args: tuple = ()
+        self.template_kwargs: dict = {}
 
     def copy_others_template(self, others: NamePath):
         """ Deep copy the template from another NamePath """
         self.template = others.template
-        self.template_args, self.template_kwargs = copy.deepcopy((
-                others.template_args, others.template_kwargs))
+        self.template_args = copy.deepcopy(others.template_args)
+        self.template_kwargs = copy.deepcopy(others.template_kwargs)
 
     def get_fields_name(self) -> list[str | int]:
         """ Extract all replacement fields from string """
@@ -90,7 +91,7 @@ class NamePath(str):
         fields = self.get_fields_name()
         search_pattern = str(self).format(
             *("*" for i in fields if type(i) is int),
-            **{i: "*" for i in fields if type(i) is str}
+            **{i: "*" for i in fields if type(i) is str},
         )
         # add * in the ends
         if not search_pattern.endswith("*"):
@@ -122,18 +123,23 @@ class NamePath(str):
         """
         result = parse.parse(str(self) + ".{" + self.suffix_key + "}", str(name))
         self.logger.debug(f"Extract {name}: {result=}")
-        if (result
-                and not any(["." in v for v in result.fixed])
-                and not any(["." in v and k != self.suffix_key
-                             for k, v in result.named.items()])):
+        if (
+            result
+            and not any(["." in v for v in result.fixed])
+            and not any(
+                ["." in v and k != self.suffix_key for k, v in result.named.items()]
+            )
+        ):
             return result
 
         # case of the path is existed
         result = parse.parse(str(self), str(name))
         self.logger.debug(f"Extract {name}: {result=}")
-        if (result
-                and not any(["." in v for v in result.fixed])
-                and not any(["." in v for v in result.named.values()])):
+        if (
+            result
+            and not any(["." in v for v in result.fixed])
+            and not any(["." in v for v in result.named.values()])
+        ):
             return result
         return None
 
@@ -169,17 +175,18 @@ class NamePath(str):
             return new_name
 
         # case2 (written in example)
-        new_name.template_args = list(self.template_args)
+        tmp_template_args = []
+        tmp_template_args = list(self.template_args)
         count = 0
-        for i, arg in enumerate(new_name.template_args):
+        for i, arg in enumerate(tmp_template_args):
             if arg == "{}":
                 if count >= len(args):
                     raise NamePipeAssert("resemble template args fail")
-                new_name.template_args[i] = args[count]
+                tmp_template_args[i] = args[count]
                 count += 1
         if count != len(args):
             raise NamePipeAssert("resemble template args fail")
-        new_name.template_args = tuple(new_name.template_args)
+        new_name.template_args = tuple(tmp_template_args)
         return new_name
 
     def get_input_names(self, depended_pos: list[str | int] = []) -> list[NamePath]:
@@ -221,18 +228,23 @@ class NamePath(str):
                 continue
 
             # replace depended field to {}
-            result_named = {k: v for k, v in result.named.items()
-                            if k != self.suffix_key}
-            mask_args = tuple(v if k not in depended else "{}"
-                              for k, v in enumerate(result.fixed))
-            mask_kwargs = {k: v if k not in depended else "{}"
-                           for k, v in result_named.items()}
+            result_named = {
+                k: v for k, v in result.named.items() if k != self.suffix_key
+            }
+            mask_args = tuple(
+                v if k not in depended else "{}" for k, v in enumerate(result.fixed)
+            )
+            mask_kwargs = {
+                k: v if k not in depended else "{}" for k, v in result_named.items()
+            }
 
             # main
             new_name = self.construct_name(mask_args, mask_kwargs)
-            self.logger.debug(f"Template: {new_name.template} "
-                              f"args={new_name.template_args} "
-                              f"{new_name.template_kwargs}")
+            self.logger.debug(
+                f"Template: {new_name.template} "
+                f"args={new_name.template_args} "
+                f"{new_name.template_kwargs}"
+            )
             names.add(new_name)
         return sorted(names)
 
@@ -273,7 +285,7 @@ class NamePath(str):
 
         new_name = NamePath(new_string)
         new_name.template = new_template
-        new_name.template_args = new_args
+        new_name.template_args = tuple(new_args)
         return new_name
 
     def __add__(self, others: Any) -> NamePath:
