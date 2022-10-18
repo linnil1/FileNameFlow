@@ -2,10 +2,11 @@ import unittest
 from typing import Iterable
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from functools import partial
 import shutil
 import logging
 
-from namepipe import NamePath, NameTask, compose
+from namepipe import NamePath, NameTask, compose, nt
 from namepipe.error import NamePipeError
 logging.basicConfig(level=logging.DEBUG)
 
@@ -316,10 +317,10 @@ class TestTask(unittest.TestCase):
 
         # set args
         task_args = NameTask(func=lambda i, j: i + "." + j)
-        task_args1 = task_args("a")
-        tmp_dir + "/test.{}" >> task_args1     >> tmp_dir + "/test.{}.a"
-        tmp_dir + "/test.{}" >> task_args("b") >> tmp_dir + "/test.{}.b"
-        tmp_dir + "/test.{}" >> task_args1     >> tmp_dir + "/test.{}.a"
+        task_args1 = task_args(j="a")
+        tmp_dir + "/test.{}" >> task_args1       >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_args(j="b") >> tmp_dir + "/test.{}.b"
+        tmp_dir + "/test.{}" >> task_args1       >> tmp_dir + "/test.{}.a"
 
         # set kwargs
         def task_kwarg(input_name, index="123"):
@@ -332,3 +333,59 @@ class TestTask(unittest.TestCase):
         tmp_dir + "/test.{}" >> task_kwarg1           >> tmp_dir + "/test.{}.a"
         tmp_dir + "/test.{}" >> task_kwarg            >> tmp_dir + "/test.{}.123"
 
+    def test_nt(self):
+        """ test nt functionality, directed call and decorator """
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.0.txt").touch()
+        Path(f"{tmp_dir}/test.1.txt").touch()
+        func = lambda i, j=".j": i + j + ".123"
+        tmp_dir + "/test.{}" >> nt(func)                   >> tmp_dir + "/test.{}.j.123"
+        tmp_dir + "/test.{}" >> nt(func)(j=".j2")          >> tmp_dir + "/test.{}.j2.123"
+        tmp_dir + "/test.{}" >> nt(partial(func, j=".j2")) >> tmp_dir + "/test.{}.j2.123"
+        tmp_dir + "/test.{}" >> nt(lambda i: i.replace_wildcard() + ".123",
+                                   depended_pos=[0])       >> tmp_dir + "/test_merge.123"
+        tmp_dir + "/test.{}" >> NameTask(lambda i: i.replace_wildcard() + ".123",
+                                         depended_pos=[0]) >> tmp_dir + "/test_merge.123"
+        @nt
+        def func1(i):
+            return i + ".123"
+        tmp_dir + "/test.{}" >> func1          >> tmp_dir + "/test.{}.123"
+
+        @nt
+        def func2(i, j=".j"):
+            return i + j + ".123"
+        tmp_dir + "/test.{}" >> func2(j=".j2") >> tmp_dir + "/test.{}.j2.123"
+
+        # TODO: not work
+        # @nt(depended_pos=[0])
+        # def func3(i):
+        #     return i.replace_wildcard() + ".123"
+        # tmp_dir + "/test.{}" >> func3          >> tmp_dir + "/test_merge.123"
+
+    def test_strange_usage(self):
+        """ unsupport method, but i test it, maybe someday will be move to TODO """
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.0.txt").touch()
+        func = lambda i: i + ".123"
+
+        # these work
+        compose([f"{tmp_dir}/test.0", f"{tmp_dir}/test.0"])
+        with self.assertRaises(NamePipeError):
+            compose([f"{tmp_dir}/test.0", f"{tmp_dir}/test.1"])
+        compose([
+            f"{tmp_dir}/test.0",
+            func,
+            f"{tmp_dir}/test.0.123"
+        ])
+
+        # may be added
+        with self.assertRaises(NamePipeError):
+            compose([func, func])
+
+        # never work, because of built-in type
+        with self.assertRaises(TypeError):
+            "" >> "1234"
+        with self.assertRaises(TypeError):
+            "{tmp_dir}/test.0" >> "{tmp_dir}/test.0"
+        with self.assertRaises(TypeError):
+            f"{tmp_dir}/test.0" >> func >> f"{tmp_dir}/test.0.123"

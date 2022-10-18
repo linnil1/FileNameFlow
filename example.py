@@ -2,8 +2,9 @@ import os
 import logging
 import subprocess
 from pathlib import Path
+from functools import partial
 
-from namepipe import nt, NameTask
+from namepipe import nt, NameTask, compose
 # Debug info
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -46,7 +47,6 @@ def createBwaIndex(input_name):
 
 def bwa(input_name, index):
     """ 1 -> 1 """
-    index = str(index)
     checkExist(index + ".index")
     checkExist(input_name + ".1.fq.gz")
     checkExist(input_name + ".2.fq.gz")
@@ -175,8 +175,18 @@ if __name__ == "__main__":
     print(bwa_index)
 
     # 0 -> many -> (for each) 1 -> 1
-    bwa_data = "." >> NameTask(create_folder)(folder="data") >> NameTask(createFastq) >> NameTask(bwa)(index=bwa_index)
-    bwa_stat = bwa_data >> extractChr >> statChr >> NameTask(rename).set_depended([0, 1])
+    # bwa_data = "." >> NameTask(create_folder)(folder="data") >> NameTask(createFastq) >> NameTask(bwa)(index=str(bwa_index))
+    bwa_data = "." \
+               >> NameTask(partial(create_folder, folder="data")) \
+               >> createFastq \
+               >> partial(bwa, index=str(bwa_index))
+    # bwa_stat = bwa_data >> extractChr >> statChr >> NameTask(rename).set_depended([0, 1])
+    bwa_stat = compose([
+        bwa_data,
+        extractChr,
+        statChr,
+        nt(rename, depended_pos=[0, 1]),
+    ])
     print(bwa_stat)
 
     # result and swap_result is basically the same but use different strucutre

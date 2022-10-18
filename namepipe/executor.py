@@ -14,12 +14,12 @@ class BaseTaskExecutor:
         return input_name
 
     def run_tasks(
-        self, names: list[NamePath], func: Callable, func_args: tuple, func_kwargs: dict
+        self, names: list[NamePath], func: Callable
     ) -> list[NamePath | str]:
         # self.logger.info(f"Run  func={self.func.__name__} {name=}")
         return_names = []
         for name in names:
-            return_names.append(func(name, *func_args, **func_kwargs))
+            return_names.append(func(name))
         return return_names
 
     def post_task(self, output_name: NamePath) -> NamePath:
@@ -31,10 +31,10 @@ class ConcurrentTaskExecutor(BaseTaskExecutor):
         self.threads = multiprocessing.cpu_count()
 
     def run_tasks(
-        self, names: list[NamePath], func: Callable, func_args: tuple, func_kwargs: dict
+        self, names: list[NamePath], func: Callable
     ) -> list[NamePath | str]:
         exes = []
         with ProcessPoolExecutor(max_workers=self.threads) as executor:
             for name in names:
-                exes.append(executor.submit(func, name, *func_args, **func_kwargs))
+                exes.append(executor.submit(func, name))
             return [exe.result() for exe in exes]
