@@ -14,4 +14,5 @@ class NamePipeAssert(NamePipeError):
 
 
 class NamePipeNotImplemented(NamePipeError):
+    """ Not implementated code """
     pass

@@ -221,21 +221,22 @@ class TestTask(unittest.TestCase):
         self.assertLeng(Path(tmp_dir).iterdir(), 2)
 
         # run a task
-        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        tmp_dir + "/test.{}"         >> NameTask(func=subtask)  >> tmp_dir + "/test.{}.test2.{}"
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
 
         # run two task
-        task1 = tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        task1 = tmp_dir + "/test.{}" >> NameTask(func=subtask)  >> tmp_dir + "/test.{}.test2.{}"
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
-        task2 = task1 >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}.test2.{}"
+        task2 = task1                >> NameTask(func=subtask)  >> tmp_dir + "/test.{}.test2.{}.test2.{}"
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4 + 8)
 
         # continue name from intermediate task (task1 instead of task2)
-        task1 >> NameTask(func=subtask3) >> tmp_dir + "/test.{}.test2.{}.test3.{}"
+        task1                        >> NameTask(func=subtask3) >> tmp_dir + "/test.{}.test2.{}.test3.{}"
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4 + 8 + 8)
 
         # or run two tasks in one line
-        tmp_dir + "/test.{}" >> NameTask(func=subtask3) >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test3.{}.test2.{}"
+        tmp_dir + "/test.{}"         >> NameTask(func=subtask3) \
+                                     >> NameTask(func=subtask)  >> tmp_dir + "/test.{}.test3.{}.test2.{}"
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4 + 8 + 8 + 4 + 8)
 
         # Task did not run
@@ -260,7 +261,11 @@ class TestTask(unittest.TestCase):
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
 
     def test_compose(self):
-        """ Use compose instead of cascading >> """
+        """
+        Use compose instead of cascading >>
+        * original compose
+        * allow callable and str
+        """
         tmp_dir = self.tmp_dir
         Path(f"{tmp_dir}/test.1.txt").touch()
         Path(f"{tmp_dir}/test.2.txt").touch()
@@ -276,6 +281,12 @@ class TestTask(unittest.TestCase):
         task22 = compose([lambda i: i + ".a"])  # callable
         task23 = task21 >> task22 >> tmp_dir + "/test.{}.a"
         task24 = compose([task21, task22, tmp_dir + "/test.{}.a"])
+
+        # tmp_dir + "/test.{}.a" >> tmp_dir + "/test.{}.a"]
+        compose([tmp_dir + "/test.{}.a", tmp_dir + "/test.{}.a"])
+        compose([tmp_dir + "/test.{}.a"]) >> compose([tmp_dir + "/test.{}.a"])
+        with self.assertRaises(NamePipeError):
+            compose([tmp_dir + "/test.{}.a", tmp_dir + "/test.{}.b"])
 
     def test_replace_wildcard_by_merge(self):
         """ Test replace_wildcard work with task execution """
@@ -317,10 +328,10 @@ class TestTask(unittest.TestCase):
 
         # set args
         task_args = NameTask(func=lambda i, j: i + "." + j)
-        task_args1 = task_args(j="a")
-        tmp_dir + "/test.{}" >> task_args1       >> tmp_dir + "/test.{}.a"
-        tmp_dir + "/test.{}" >> task_args(j="b") >> tmp_dir + "/test.{}.b"
-        tmp_dir + "/test.{}" >> task_args1       >> tmp_dir + "/test.{}.a"
+        task_args1 = task_args.set_args(j="a")
+        tmp_dir + "/test.{}" >> task_args1                >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_args.set_args(j="b") >> tmp_dir + "/test.{}.b"
+        tmp_dir + "/test.{}" >> task_args1                >> tmp_dir + "/test.{}.a"
 
         # set kwargs
         def task_kwarg(input_name, index="123"):
@@ -328,55 +339,63 @@ class TestTask(unittest.TestCase):
         task_kwarg = NameTask(func=task_kwarg)
         task_kwarg1 = task_kwarg.set_args(index="a")
 
-        tmp_dir + "/test.{}" >> task_kwarg1           >> tmp_dir + "/test.{}.a"
-        tmp_dir + "/test.{}" >> task_kwarg(index="b") >> tmp_dir + "/test.{}.b"
-        tmp_dir + "/test.{}" >> task_kwarg1           >> tmp_dir + "/test.{}.a"
-        tmp_dir + "/test.{}" >> task_kwarg            >> tmp_dir + "/test.{}.123"
+        tmp_dir + "/test.{}" >> task_kwarg1                    >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_kwarg.set_args(index="b") >> tmp_dir + "/test.{}.b"
+        tmp_dir + "/test.{}" >> task_kwarg1                    >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_kwarg                     >> tmp_dir + "/test.{}.123"
+
+    def test_suger_syntax(self):
+        """
+        test >> with minimal text
+        * Use callable instead of NameTask
+        * Use NamePath to avoid NameTask in the first task
+        """
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.0.txt").touch()
+        Path(f"{tmp_dir}/test.0.123.txt").touch()
+        func = lambda i: i + ".123"
+        tmp_dir + "/test.{}" >> nt(func) >> tmp_dir + "/test.{}.123"
+        tmp_dir + "/test.{}" >> nt(func) >> func >> tmp_dir + "/test.{}.123.123"
+        NamePath(tmp_dir + "/test.{}") >> func >> func >> tmp_dir + "/test.{}.123.123"
+        task1 = tmp_dir + "/test.{}" >> nt(func)
+        task1 >> tmp_dir + "/test.{}.123"
+        task1 >> func >> tmp_dir + "/test.{}.123.123"
+
+        # assertion test
+        NamePath(tmp_dir + "/test.{}") >> tmp_dir + "/test.{}"
+        tmp_dir + "/test.{}" >> NamePath(tmp_dir + "/test.{}")
 
     def test_nt(self):
-        """ test nt functionality, directed call and decorator """
+        """
+        test nt and NameTask Init functionality
+        * directed call (nt, NameTask)
+        * directed call (NameTask) with parameters
+        * decorator (nt)
+        """
         tmp_dir = self.tmp_dir
         Path(f"{tmp_dir}/test.0.txt").touch()
         Path(f"{tmp_dir}/test.1.txt").touch()
         func = lambda i, j=".j": i + j + ".123"
-        tmp_dir + "/test.{}" >> nt(func)                   >> tmp_dir + "/test.{}.j.123"
-        tmp_dir + "/test.{}" >> nt(func)(j=".j2")          >> tmp_dir + "/test.{}.j2.123"
-        tmp_dir + "/test.{}" >> nt(partial(func, j=".j2")) >> tmp_dir + "/test.{}.j2.123"
-        tmp_dir + "/test.{}" >> nt(lambda i: i.replace_wildcard() + ".123",
-                                   depended_pos=[0])       >> tmp_dir + "/test_merge.123"
+        tmp_dir + "/test.{}" >> nt(func)                    >> tmp_dir + "/test.{}.j.123"
+        tmp_dir + "/test.{}" >> nt(func).set_args(j=".j2")  >> tmp_dir + "/test.{}.j2.123"
+        tmp_dir + "/test.{}" >> nt(partial(func, j=".j2"))  >> tmp_dir + "/test.{}.j2.123"
         tmp_dir + "/test.{}" >> NameTask(lambda i: i.replace_wildcard() + ".123",
-                                         depended_pos=[0]) >> tmp_dir + "/test_merge.123"
+                                         depended_pos=[0])  >> tmp_dir + "/test_merge.123"
         @nt
         def func1(i):
             return i + ".123"
-        tmp_dir + "/test.{}" >> func1          >> tmp_dir + "/test.{}.123"
+        tmp_dir + "/test.{}" >> func1                       >> tmp_dir + "/test.{}.123"
 
         @nt
         def func2(i, j=".j"):
             return i + j + ".123"
-        tmp_dir + "/test.{}" >> func2(j=".j2") >> tmp_dir + "/test.{}.j2.123"
+        tmp_dir + "/test.{}" >> func2.set_args(j=".j2")     >> tmp_dir + "/test.{}.j2.123"
 
-        # TODO: not work
-        # @nt(depended_pos=[0])
-        # def func3(i):
-        #     return i.replace_wildcard() + ".123"
-        # tmp_dir + "/test.{}" >> func3          >> tmp_dir + "/test_merge.123"
-
-    def test_strange_usage(self):
+    def test_strange_case(self):
         """ unsupport method, but i test it, maybe someday will be move to TODO """
         tmp_dir = self.tmp_dir
         Path(f"{tmp_dir}/test.0.txt").touch()
         func = lambda i: i + ".123"
-
-        # these work
-        compose([f"{tmp_dir}/test.0", f"{tmp_dir}/test.0"])
-        with self.assertRaises(NamePipeError):
-            compose([f"{tmp_dir}/test.0", f"{tmp_dir}/test.1"])
-        compose([
-            f"{tmp_dir}/test.0",
-            func,
-            f"{tmp_dir}/test.0.123"
-        ])
 
         # may be added
         with self.assertRaises(NamePipeError):

@@ -311,3 +311,13 @@ class NamePath(str):
         new_name.copy_others_template(self)
         new_name.template = others + self.template
         return new_name
+
+    def __rshift__(self, others: Any) -> Any:
+        """ see compose() """
+        from . import compose  # avoid recursive import
+        return compose([self, others])
+
+    def __rrshift__(self, others: Any) -> Any:
+        """ see compose() """
+        from . import compose
+        return compose([others, self])

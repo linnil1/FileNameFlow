@@ -16,11 +16,15 @@ class NameTask:
 
     def __init__(self, func=None,
                  depended_pos: list[str | int] = [],
-                 executor: BaseTaskExecutor = None):
+                 executor: BaseTaskExecutor | None = None):
+        if isinstance(func, NameTask):
+            task = func.copy()
+            self.func: Callable = task.func
+            self.depended_pos: list[str | int] = task.depended_pos
+            self.executor: BaseTaskExecutor | None = task.executor
         self.func = partial(func)
         self.depended_pos = depended_pos
         self.executor = executor
-
         # each instance
         self.input_name: NamePath | None = None
         self.output_name: NamePath | None = None
@@ -32,7 +36,7 @@ class NameTask:
         return (
             f"NameTask(func={self.func} "
             f"input={self.input_name} "
-            f"depend=({self.depended_pos}) "
+            f"depend={self.depended_pos} "
             f"output={self.output_name})"
         )
 
@@ -90,12 +94,9 @@ class NameTask:
         """ Deep copy the instance """
         return copy.deepcopy(self)
 
-    def __call__(self, *args, **kwargs) -> NameTask:
+    def set_args(self, *args, **kwargs) -> NameTask:
         """
         Set arguments for main function
-
-        I recommand the write args in the output_name
-        (make suffix longer, but clear)
 
         Note that it will return a new instance because
         this task may be used mutliple times in the same pipeline
@@ -104,27 +105,21 @@ class NameTask:
         Example:
           ``` python
           def func_need_args(input_name, index):
+              # I recommand the write args in the output_name TO
+              # make suffix longer, but clearer
               run(f"cat {input_name}.txt > {input_name}.add_{index}.txt")
               run(f"echo {index} >> {input_name}.add_{index}.txt")
               return input_name + f".add_{index}"
 
-          "./test.{}" >> NameTask(func_need_args)(index="indexname")
-          # or
           "./test.{}" >> NameTask(partial(func_need_args, index="indexname"))
           ```
 
         Return:
           A new NameTask
         """
-        # TODO: need added method without replacement ?
-        # why new instance -> create new task
         task = self.copy()
         task.func = partial(task.func, *args, **kwargs)
         return task
-
-    def set_args(self, *args, **kwargs) -> NameTask:
-        """ Deprecated: see __call__ method """
-        return self.__call__(*args, **kwargs)
 
     def set_depended(self, pos: int | list[int]) -> NameTask:
         """
@@ -160,46 +155,16 @@ class NameTask:
         task.executor = executor
         return task
 
-    def __rrshift__(self, others: Any) -> NameTask:
-        """
-        Usage:
-        1. Use a path as input: "path1/name" >> func
-        2. Use empty path as input: None >> func
-        """
-        # type == NameTask is already written in rshift
-        if isinstance(others, (NamePath, str)):
-            return self.copy().run(NamePath(others))
-        elif others is None:
-            return self.copy().run(NamePath(""))
-        raise NotImplementedError
+    def __rrshift__(self, others: Any) -> Any:
+        """ see compose() """
+        return compose([others, self])
 
-    def __rshift__(self, others: Any) -> NameTask:
-        """
-        Usage:
-        1. assert the final result: func >> "path/result_name"
-        2. propagate the name to the follwing task: func1 >> func2
-        """
-        # execution syntax
-        if isinstance(others, NameTask):
-            if self.output_name is None:
-                raise NamePipeError(f"This task ({self.func}) is not run yet")
-            return others.copy().run(self.output_name)
-        elif isinstance(others, Callable):  # type: ignore
-            if self.output_name is None:
-                raise NamePipeError(f"This task ({self.func}) is not run yet")
-            return NameTask(func=others).run(self.output_name)
-        # assert syntax
-        elif isinstance(others, (str, NamePath)):
-            if str(self.output_name) != str(others):
-                raise NamePipeDataError(
-                    f"Assert Error: task({self.func})'s "
-                    f"output={self.output_name} != {others}"
-                )
-            return self
-        raise NotImplementedError
+    def __rshift__(self, others: Any) -> Any:
+        """ see compose() """
+        return compose([self, others])
 
 
-def nt(func, depended_pos=[], executor=None):
+def nt(func):
     """
     A decorator to create a NameTask() instance
 
@@ -223,15 +188,7 @@ def nt(func, depended_pos=[], executor=None):
       "" >> nt(doSomething1)
       ```
     """
-    if isinstance(func, NameTask):
-        task = func
-    else:
-        task = NameTask(func=partial(func))
-    if executor is not None:
-        task = task.set_executor(executor)
-    if depended_pos:
-        task = task.set_depended(depended_pos)
-    return task
+    return NameTask(func=func)
 
 
 def compose(
@@ -248,37 +205,46 @@ def compose(
       task1 = compose([
           "", doSomething, doSomething2
       ])
-      # equivalent to task2 = task1 >> doSomething3
+      # equivalent to task2 = task1 >> doSomething3 >> expected_result_path
       task2 = comppse([
-          task1 , doSomething3
+          task1 , doSomething3, expected_result_path
       ])
       ```
     """
     # run all task
-    current_item = None
+    a = None
     for item in func_list:
         if isinstance(item, NameTask):
-            pass
+            b: NameTask | NamePath = item
         elif isinstance(item, Callable):  # type: ignore
-            item = NameTask(func=item)
+            b = NameTask(func=item)
         elif isinstance(item, (NamePath, str)):
-            item = NamePath(item)
+            b = NamePath(item)
         elif item is None:
-            item = NamePath("")
+            b = NamePath("")
         else:
             raise NotImplementedError
 
-        if current_item is None:
-            # Transfer first NamePath to NameTask
-            # so this will work: "123" >> "123"
-            if isinstance(item, NamePath):
-                task = NameTask(lambda i: i)
-                task.output_name = item
-                item = task
-            current_item = item
-        else:
-            current_item = current_item >> item
-    if current_item is not None:
-        return current_item
-    else:
+        # first item
+        if a is None:
+            a = b
+        # execution
+        elif isinstance(a, NamePath) and isinstance(b, NameTask):
+            a = b.copy().run(a)
+        elif isinstance(a, NameTask) and isinstance(b, NameTask):
+            if a.output_name is None:
+                raise NamePipeError(f"This task ({a.func}) is not run yet")
+            a = b.copy().run(a.output_name)
+        # assertion
+        elif isinstance(a, NamePath) and isinstance(b, NamePath):
+            if str(a) != str(b):
+                raise NamePipeDataError(f"Assert Error: {a} != {a}")
+        elif isinstance(a, NameTask) and isinstance(b, NamePath):
+            if str(a.output_name) != str(b):
+                raise NamePipeDataError(
+                    f"Assert Error: task({a.func})'s "
+                    f"output={a.output_name} != {b}"
+                )
+    if a is None:  # empty list -> return a empty path
         return NamePath("")
+    return a

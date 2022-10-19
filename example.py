@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 from functools import partial
 
-from namepipe import nt, NameTask, compose
+from namepipe import NamePath, NameTask, compose
 # Debug info
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -171,13 +171,13 @@ if __name__ == "__main__":
     NameTask.default_executor = ConcurrentTaskExecutor()
 
     # 0 -> 1 -> 1
-    bwa_index = None >> NameTask(create_folder)(folder="index") >> createBwaIndex >> "index/bwa"
+    bwa_index = None >> NameTask(partial(create_folder, folder="index")) >> createBwaIndex >> "index/bwa"
     print(bwa_index)
 
     # 0 -> many -> (for each) 1 -> 1
     # bwa_data = "." >> NameTask(create_folder)(folder="data") >> NameTask(createFastq) >> NameTask(bwa)(index=str(bwa_index))
-    bwa_data = "." \
-               >> NameTask(partial(create_folder, folder="data")) \
+    bwa_data = NamePath(".") \
+               >> partial(create_folder, folder="data") \
                >> createFastq \
                >> partial(bwa, index=str(bwa_index))
     # bwa_stat = bwa_data >> extractChr >> statChr >> NameTask(rename).set_depended([0, 1])
@@ -185,12 +185,12 @@ if __name__ == "__main__":
         bwa_data,
         extractChr,
         statChr,
-        nt(rename, depended_pos=[0, 1]),
+        NameTask(rename, depended_pos=[0, 1]),
     ])
     print(bwa_stat)
 
     # result and swap_result is basically the same but use different strucutre
     result = bwa_stat >> NameTask(mergeChr).set_depended(-1) >> NameTask(mergeStat).set_depended(-1)
     print(result)
-    swap_result = bwa_stat >> NameTask(renameSwap) >> NameTask(mergeChr).set_depended(0) >> NameTask(mergeStat).set_depended(0)
+    swap_result = bwa_stat >> renameSwap >> NameTask(mergeChr).set_depended(0) >> NameTask(mergeStat).set_depended(0)
     print(swap_result)
