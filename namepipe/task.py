@@ -10,13 +10,22 @@ from .error import *
 
 
 class NameTask:
-    """ Task class that interact with NamePath """
-    logger = logging.getLogger(__name__)
-    default_executor = BaseTaskExecutor()
+    """Task class that interact with NamePath"""
 
-    def __init__(self, func=None,
-                 depended_pos: list[str | int] = [],
-                 executor: BaseTaskExecutor | None = None):
+    _logger = logging.getLogger(__name__)
+    _default_executor = BaseTaskExecutor()
+
+    @staticmethod
+    def set_default_executor(executor: BaseTaskExecutor) -> None:
+        """Change default executor"""
+        NameTask._default_executor = executor
+
+    def __init__(
+        self,
+        func=None,
+        depended_pos: list[str | int] = [],
+        executor: BaseTaskExecutor | None = None,
+    ):
         if isinstance(func, NameTask):
             task = func.copy()
             self.func: Callable = task.func
@@ -46,8 +55,8 @@ class NameTask:
         """
         # init
         if self.executor is None:
-            self.executor = self.default_executor
-        self.logger.info(f"Init func={self.func} input={input_name}")
+            self.executor = self._default_executor
+        self._logger.info(f"Init func={self.func} input={input_name}")
         self.input_name = self.executor.pre_task(input_name)
 
         # list names
@@ -58,9 +67,7 @@ class NameTask:
             )
 
         # main
-        return_names = self.executor.run_tasks(
-            names, self.func
-        )
+        return_names = self.executor.run_tasks(names, self.func)
 
         # merge return name
         output_name = None
@@ -87,11 +94,11 @@ class NameTask:
             )
         self.output_name = NamePath(str(output_name))  # clean up args
         self.output_name = self.executor.post_task(self.output_name)
-        self.logger.info(f"Done func={self.func} output={self.output_name}")
+        self._logger.info(f"Done func={self.func} output={self.output_name}")
         return self
 
     def copy(self) -> NameTask:
-        """ Deep copy the instance """
+        """Deep copy the instance"""
         return copy.deepcopy(self)
 
     def set_args(self, *args, **kwargs) -> NameTask:
@@ -112,6 +119,8 @@ class NameTask:
               return input_name + f".add_{index}"
 
           "./test.{}" >> NameTask(partial(func_need_args, index="indexname"))
+          # or
+          "./test.{}" >> NameTask(func_need_args).set_args(index="indexname"))
           ```
 
         Return:
@@ -156,11 +165,11 @@ class NameTask:
         return task
 
     def __rrshift__(self, others: Any) -> Any:
-        """ see compose() """
+        """see compose()"""
         return compose([others, self])
 
     def __rshift__(self, others: Any) -> Any:
-        """ see compose() """
+        """see compose()"""
         return compose([self, others])
 
 
@@ -242,8 +251,7 @@ def compose(
         elif isinstance(a, NameTask) and isinstance(b, NamePath):
             if str(a.output_name) != str(b):
                 raise NamePipeDataError(
-                    f"Assert Error: task({a.func})'s "
-                    f"output={a.output_name} != {b}"
+                    f"Assert Error: task({a.func})'s " f"output={a.output_name} != {b}"
                 )
     if a is None:  # empty list -> return a empty path
         return NamePath("")

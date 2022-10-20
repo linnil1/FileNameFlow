@@ -1,12 +1,12 @@
 # Name-based Pipeline
 
-A pipeline doesn't depended on the file-extension (suffix) of filename.
+Core features
 
-All input/output are the NAME, which is actually the filename without suffix
-
-The NAME can propagated (become longer name) as task executed on, it's very suitable for versioning and prevent overwritting
-
-The filename is read/created based on NAME, so the filenamew listed in directory can naively tell what pipeline has done
+* Python function as the task in the pipeline
+* The input (parameters) and output (return value) of function are NAME, which is actually the filename without suffix
+* The NAME can be cascading (become longer name) as task executed, it's very suitable for versioning and prevent overwritting
+* The filename are read/created based on NAME, so the files listed in directory are corresponing to the NAME which can naively tell what task has done
+* THE NAME support wildcards, thus it can do merging tricks.
 
 More details are written in the document, check the link below.
 

@@ -1,18 +1,14 @@
 class NamePipeError(Exception):
-    """ Basic exception for namepipe module """
-    pass
+    """Basic exception for namepipe module"""
 
 
 class NamePipeDataError(NamePipeError):
-    """ Raise this when the name-based concept cannot work """
-    pass
+    """Raise this when the name-based concept cannot work"""
 
 
 class NamePipeAssert(NamePipeError):
-    """ Mostly this is internal error """
-    pass
+    """Mostly this is internal error"""
 
 
 class NamePipeNotImplemented(NamePipeError):
-    """ Not implementated code """
-    pass
+    """Non-implementated error(Mostly related to kwargs in path)"""

@@ -22,8 +22,8 @@ class NamePath(str):
     NamePath is inherited from str, so all str methods can works.
     """
 
-    logger = logging.getLogger(__name__)
-    suffix_key = "namepipe_catch_suffix"
+    _logger = logging.getLogger(__name__)
+    _suffix_key = "namepipe_catch_suffix"  # use as kwargs for eaiser implemented
 
     def __init__(self, name: str):
         """
@@ -54,13 +54,13 @@ class NamePath(str):
         self.template_kwargs: dict = {}
 
     def copy_others_template(self, others: NamePath):
-        """ Deep copy the template from another NamePath """
+        """Deep copy the template from another NamePath"""
         self.template = others.template
         self.template_args = copy.deepcopy(others.template_args)
         self.template_kwargs = copy.deepcopy(others.template_kwargs)
 
     def get_fields_name(self) -> list[str | int]:
-        """ Extract all replacement fields from string """
+        """Extract all replacement fields from string"""
         fields_str = (i[1] for i in Formatter().parse(str(self)) if i[1] is not None)
         fields = []  # type: list[str | int]
         count = 0
@@ -85,7 +85,7 @@ class NamePath(str):
         it can capture multiple words like `xxx.ooo` in one `*`
         """
         if Path(self).exists():
-            self.logger.debug(f"Skip searching: '{self}' is existed")
+            self._logger.debug(f"Skip searching: '{self}' is existed")
             return [str(self)]
         # replace into wildcard "{}/{}.csv" -> "*/*.csv*"
         fields = self.get_fields_name()
@@ -98,7 +98,7 @@ class NamePath(str):
             search_pattern += "*"
         # search and return
         files = list(glob.glob(search_pattern))
-        self.logger.debug(f"Searching {search_pattern=} files_count={len(files)}")
+        self._logger.debug(f"Searching {search_pattern=} files_count={len(files)}")
         return files
 
     def extract_fields(self, name: str | Path) -> parse.Result:
@@ -121,20 +121,20 @@ class NamePath(str):
           return = Result.fixed = ("a",)
           ```
         """
-        result = parse.parse(str(self) + ".{" + self.suffix_key + "}", str(name))
-        self.logger.debug(f"Extract {name}: {result=}")
+        result = parse.parse(str(self) + ".{" + self._suffix_key + "}", str(name))
+        self._logger.debug(f"Extract {name}: {result=}")
         if (
             result
             and not any(["." in v for v in result.fixed])
             and not any(
-                ["." in v and k != self.suffix_key for k, v in result.named.items()]
+                ["." in v and k != self._suffix_key for k, v in result.named.items()]
             )
         ):
             return result
 
         # case of the path is existed
         result = parse.parse(str(self), str(name))
-        self.logger.debug(f"Extract {name}: {result=}")
+        self._logger.debug(f"Extract {name}: {result=}")
         if (
             result
             and not any(["." in v for v in result.fixed])
@@ -229,7 +229,7 @@ class NamePath(str):
 
             # replace depended field to {}
             result_named = {
-                k: v for k, v in result.named.items() if k != self.suffix_key
+                k: v for k, v in result.named.items() if k != self._suffix_key
             }
             mask_args = tuple(
                 v if k not in depended else "{}" for k, v in enumerate(result.fixed)
@@ -240,7 +240,7 @@ class NamePath(str):
 
             # main
             new_name = self.construct_name(mask_args, mask_kwargs)
-            self.logger.debug(
+            self._logger.debug(
                 f"Template: {new_name.template} "
                 f"args={new_name.template_args} "
                 f"{new_name.template_kwargs}"
@@ -305,7 +305,7 @@ class NamePath(str):
         return new_name
 
     def __radd__(self, others: Any) -> NamePath:
-        """ Adding prefix (Almost same as `__add__`) """
+        """Adding prefix (Almost same as `__add__`)"""
         # Note that template may have "{}" but I ignore
         new_name = NamePath(str(others).__add__(self))
         new_name.copy_others_template(self)
@@ -313,11 +313,13 @@ class NamePath(str):
         return new_name
 
     def __rshift__(self, others: Any) -> Any:
-        """ see compose() """
+        """see compose()"""
         from . import compose  # avoid recursive import
+
         return compose([self, others])
 
     def __rrshift__(self, others: Any) -> Any:
-        """ see compose() """
+        """see compose()"""
         from . import compose
+
         return compose([others, self])
