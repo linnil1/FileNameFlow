@@ -81,12 +81,13 @@ class ConcurrentTaskExecutor(BaseTaskExecutor):
 class StandaloneTaskExecutor(BaseTaskExecutor):
     """ A standalone way to execute the task """
 
-    def __init__(self, threads: int | None = None):
+    def __init__(self, threads: int | None = None, auto_cleanup: bool = True):
         super().__init__()
         if threads:
             self.threads = threads
         else:
             self.threads = multiprocessing.cpu_count()
+        self.auto_cleanup = auto_cleanup
 
     @classmethod
     def import_func_in_main_namespace(cls, path: str) -> None:
@@ -97,6 +98,8 @@ class StandaloneTaskExecutor(BaseTaskExecutor):
         Becuase the __main__ is different in standalone process and main process.
         """
         spec = importlib.util.spec_from_file_location("tmp", path)
+        if not spec:
+            return
         assert spec
         assert spec.loader
         module = importlib.util.module_from_spec(spec)
@@ -186,6 +189,9 @@ class StandaloneTaskExecutor(BaseTaskExecutor):
             self._logger.debug(f"Load {output_file}")
             with open(output_file, "rb") as f:
                 output_name.append(pickle.load(f))
+            if self.auto_cleanup:
+                Path(f"{name}.in").unlink()
+                Path(f"{name}.out").unlink()
         self._logger.info(f"{len(exes)} tasks done")
 
         # raise error and print the error message if return Error

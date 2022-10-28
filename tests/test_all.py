@@ -1,10 +1,11 @@
+import os
+import shutil
+import logging
 import unittest
 from typing import Iterable
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from functools import partial
-import shutil
-import logging
 
 from namepipe import NamePath, NameTask, compose, nt
 from namepipe.error import NamePipeError
@@ -251,14 +252,48 @@ class TestTask(unittest.TestCase):
 
         # set global executor
         from namepipe.executor import BaseTaskExecutor, ConcurrentTaskExecutor
-        NameTask.default_executor = ConcurrentTaskExecutor()
+        NameTask.set_default_executor(ConcurrentTaskExecutor())
         tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
-        NameTask.default_executor = BaseTaskExecutor()
+        NameTask.set_default_executor(BaseTaskExecutor())
 
         # set the task with speicfic executor
         tmp_dir + "/test.{}" >> NameTask(func=subtask).set_executor(ConcurrentTaskExecutor()) >> tmp_dir + "/test.{}.test2.{}"
         self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
+
+    def test_standalone(self):
+        """ Change the StandaloneTaskExecutor """
+        ori_dir = os.getcwd()
+        os.chdir(ori_dir + "/tests")
+        tmp_dir = self.tmp_dir
+        Path(f"{tmp_dir}/test.0.txt").touch()
+        Path(f"{tmp_dir}/test.1.txt").touch()
+
+        from namepipe.executor import BaseTaskExecutor, StandaloneTaskExecutor
+        NameTask.set_default_executor(StandaloneTaskExecutor(auto_cleanup=False))
+        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
+
+        # check temp files
+        job_files = list(filter(lambda i: "job_" in str(i), os.listdir()))
+        self.assertLeng(job_files, 4)
+        self.assertLeng(filter(lambda i: i.endswith(".in"), job_files), 2)
+        self.assertLeng(filter(lambda i: i.endswith(".out"), job_files), 2)
+
+        # auto_cleanup = True
+        # and test depended
+        NameTask.set_default_executor(StandaloneTaskExecutor())
+        tmp_dir + "/test.{}" >> NameTask(func=subtask3, depended_pos=[-1]) >> tmp_dir + "/test.{}.test3.{}"
+        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4 + 2)
+        job_files = list(filter(lambda i: "job_" in str(i), os.listdir()))
+        self.assertLeng(job_files, 4)
+
+        # set it back
+        # use auto cleanup to remove temp job_*
+        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        os.chdir(ori_dir)
+        NameTask.set_default_executor(BaseTaskExecutor())
+
 
     def test_compose(self):
         """
