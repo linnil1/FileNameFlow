@@ -168,7 +168,9 @@ def renameSwap(input_name):
 
 if __name__ == "__main__":
     from namepipe.executor import ConcurrentTaskExecutor
-    NameTask.set_default_executor(ConcurrentTaskExecutor(mode="thread"))
+    from namepipe.executor import StandaloneTaskExecutor
+    # NameTask.set_default_executor(ConcurrentTaskExecutor(mode="thread"))
+    NameTask.set_default_executor(StandaloneTaskExecutor())
 
     # 0 -> 1 -> 1
     bwa_index = None >> NameTask(partial(create_folder, folder="index")) >> createBwaIndex >> "index/bwa"
