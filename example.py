@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 from functools import partial
 
-from namepipe import NamePath, NameTask, compose
+from namepipe import NamePath, NameTask, compose, nt
 # Debug info
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -93,6 +93,7 @@ def statChr(input_name):
     return output_name.template
 
 
+@nt(depended_pos=[-1])
 def mergeChr(input_name):
     """
     many -> fewer
@@ -141,9 +142,9 @@ def rename(input_name):
     input_names = input_name.get_input_names()
     output_name = "data/stage2.{}.chr.{}"  # type: str
     for name in input_names:
-        result = input_name.extract_fields(name)
         checkExist(f"{name}.txt")
-        output_file = output_name.format(*result.fixed)
+        print(output_name, name.template_args)
+        output_file = output_name.format(*name.template_args)
         run(f"ln -sf ../{name}.txt {output_file}.txt")
         checkExist(f"{output_file}.txt")
     # If you return str, make sure return the name with all wildcard = {}
@@ -192,7 +193,7 @@ if __name__ == "__main__":
     print(bwa_stat)
 
     # result and swap_result is basically the same but use different strucutre
-    result = bwa_stat >> NameTask(mergeChr).set_depended(-1) >> NameTask(mergeStat).set_depended(-1)
+    result = bwa_stat >> mergeChr() >> NameTask(mergeStat).set_depended(-1)
     print(result)
-    swap_result = bwa_stat >> renameSwap >> NameTask(mergeChr).set_depended(0) >> NameTask(mergeStat).set_depended(0)
+    swap_result = bwa_stat >> renameSwap >> mergeChr(depended_pos=[0]) >> NameTask(mergeStat).set_depended(0)
     print(swap_result)

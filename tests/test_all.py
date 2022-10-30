@@ -244,57 +244,6 @@ class TestTask(unittest.TestCase):
         with self.assertRaises(NamePipeError):
             NameTask(func=lambda i: "test/test4") >> "test/test5"
 
-    def test_concurrent(self):
-        """ Change the executor to concurrent running the tasks """
-        tmp_dir = self.tmp_dir
-        Path(f"{tmp_dir}/test.0.txt").touch()
-        Path(f"{tmp_dir}/test.1.txt").touch()
-
-        # set global executor
-        from namepipe.executor import BaseTaskExecutor, ConcurrentTaskExecutor
-        NameTask.set_default_executor(ConcurrentTaskExecutor())
-        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
-        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
-        NameTask.set_default_executor(BaseTaskExecutor())
-
-        # set the task with speicfic executor
-        tmp_dir + "/test.{}" >> NameTask(func=subtask).set_executor(ConcurrentTaskExecutor()) >> tmp_dir + "/test.{}.test2.{}"
-        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
-
-    def test_standalone(self):
-        """ Change the StandaloneTaskExecutor """
-        ori_dir = os.getcwd()
-        os.chdir(ori_dir + "/tests")
-        tmp_dir = self.tmp_dir
-        Path(f"{tmp_dir}/test.0.txt").touch()
-        Path(f"{tmp_dir}/test.1.txt").touch()
-
-        from namepipe.executor import BaseTaskExecutor, StandaloneTaskExecutor
-        NameTask.set_default_executor(StandaloneTaskExecutor(auto_cleanup=False))
-        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
-        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
-
-        # check temp files
-        job_files = list(filter(lambda i: "job_" in str(i), os.listdir()))
-        self.assertLeng(job_files, 4)
-        self.assertLeng(filter(lambda i: i.endswith(".in"), job_files), 2)
-        self.assertLeng(filter(lambda i: i.endswith(".out"), job_files), 2)
-
-        # auto_cleanup = True
-        # and test depended
-        NameTask.set_default_executor(StandaloneTaskExecutor())
-        tmp_dir + "/test.{}" >> NameTask(func=subtask3, depended_pos=[-1]) >> tmp_dir + "/test.{}.test3.{}"
-        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4 + 2)
-        job_files = list(filter(lambda i: "job_" in str(i), os.listdir()))
-        self.assertLeng(job_files, 4)
-
-        # set it back
-        # use auto cleanup to remove temp job_*
-        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
-        os.chdir(ori_dir)
-        NameTask.set_default_executor(BaseTaskExecutor())
-
-
     def test_compose(self):
         """
         Use compose instead of cascading >>
@@ -361,70 +310,60 @@ class TestTask(unittest.TestCase):
         Path(f"{tmp_dir}/test.0.txt").touch()
         Path(f"{tmp_dir}/test.1.txt").touch()
 
-        # set args
-        task_args = NameTask(func=lambda i, j: i + "." + j)
-        task_args1 = task_args.set_args(j="a")
-        tmp_dir + "/test.{}" >> task_args1                >> tmp_dir + "/test.{}.a"
-        tmp_dir + "/test.{}" >> task_args.set_args(j="b") >> tmp_dir + "/test.{}.b"
-        tmp_dir + "/test.{}" >> task_args1                >> tmp_dir + "/test.{}.a"
-
         # set kwargs
         def task_kwarg(input_name, index="123"):
+            return input_name + "." + index
+        def task_kwarg2(input_name, index):
             return input_name + "." + index
         task_kwarg = NameTask(func=task_kwarg)
         task_kwarg1 = task_kwarg.set_args(index="a")
 
-        tmp_dir + "/test.{}" >> task_kwarg1                    >> tmp_dir + "/test.{}.a"
-        tmp_dir + "/test.{}" >> task_kwarg.set_args(index="b") >> tmp_dir + "/test.{}.b"
-        tmp_dir + "/test.{}" >> task_kwarg1                    >> tmp_dir + "/test.{}.a"
-        tmp_dir + "/test.{}" >> task_kwarg                     >> tmp_dir + "/test.{}.123"
+        tmp_dir + "/test.{}" >> task_kwarg1                     >> tmp_dir + "/test.{}.a"
+        tmp_dir + "/test.{}" >> task_kwarg.set_args(index="b")  >> tmp_dir + "/test.{}.b"
+        tmp_dir + "/test.{}" >> task_kwarg1                     >> tmp_dir + "/test.{}.a"  # check the arg are overwritten by task_kwarg1
+        tmp_dir + "/test.{}" >> task_kwarg                      >> tmp_dir + "/test.{}.123"
+        tmp_dir + "/test.{}" >> NameTask(task_kwarg2).set_args(index="b")            >> tmp_dir + "/test.{}.b"
+        tmp_dir + "/test.{}" >> NameTask(task_kwarg2, func_kwargs=dict(index="456")) >> tmp_dir + "/test.{}.456"
+        tmp_dir + "/test.{}" >> NameTask(partial(task_kwarg2, index="456"))          >> tmp_dir + "/test.{}.456"
 
-    def test_suger_syntax(self):
-        """
-        test >> with minimal text
-        * Use callable instead of NameTask
-        * Use NamePath to avoid NameTask in the first task
-        """
-        tmp_dir = self.tmp_dir
-        Path(f"{tmp_dir}/test.0.txt").touch()
-        Path(f"{tmp_dir}/test.0.123.txt").touch()
-        func = lambda i: i + ".123"
-        tmp_dir + "/test.{}" >> nt(func) >> tmp_dir + "/test.{}.123"
-        tmp_dir + "/test.{}" >> nt(func) >> func >> tmp_dir + "/test.{}.123.123"
-        NamePath(tmp_dir + "/test.{}") >> func >> func >> tmp_dir + "/test.{}.123.123"
-        task1 = tmp_dir + "/test.{}" >> nt(func)
-        task1 >> tmp_dir + "/test.{}.123"
-        task1 >> func >> tmp_dir + "/test.{}.123.123"
-
-        # assertion test
-        NamePath(tmp_dir + "/test.{}") >> tmp_dir + "/test.{}"
-        tmp_dir + "/test.{}" >> NamePath(tmp_dir + "/test.{}")
+        # kwargs not set
+        with self.assertRaises(TypeError):
+            tmp_dir + "/test.{}" >> NameTask(task_kwarg2)                            >> tmp_dir + "/test.{}.123"
 
     def test_nt(self):
         """
-        test nt and NameTask Init functionality
-        * directed call (nt, NameTask)
-        * directed call (NameTask) with parameters
-        * decorator (nt)
+        test nt decorator
+        * plain decorator
+        * decorator with parameters
+        * call decorator and change the parameters
         """
         tmp_dir = self.tmp_dir
         Path(f"{tmp_dir}/test.0.txt").touch()
         Path(f"{tmp_dir}/test.1.txt").touch()
         func = lambda i, j=".j": i + j + ".123"
-        tmp_dir + "/test.{}" >> nt(func)                    >> tmp_dir + "/test.{}.j.123"
-        tmp_dir + "/test.{}" >> nt(func).set_args(j=".j2")  >> tmp_dir + "/test.{}.j2.123"
-        tmp_dir + "/test.{}" >> nt(partial(func, j=".j2"))  >> tmp_dir + "/test.{}.j2.123"
         tmp_dir + "/test.{}" >> NameTask(lambda i: i.replace_wildcard() + ".123",
-                                         depended_pos=[0])  >> tmp_dir + "/test_merge.123"
+                                         depended_pos=[0]) >> tmp_dir + "/test_merge.123"
         @nt
         def func1(i):
             return i + ".123"
-        tmp_dir + "/test.{}" >> func1                       >> tmp_dir + "/test.{}.123"
+        tmp_dir + "/test.{}" >> func1()                    >> tmp_dir + "/test.{}.123"
 
         @nt
         def func2(i, j=".j"):
             return i + j + ".123"
-        tmp_dir + "/test.{}" >> func2.set_args(j=".j2")     >> tmp_dir + "/test.{}.j2.123"
+        tmp_dir + "/test.{}" >> func2().set_args(j=".j2")        >> tmp_dir + "/test.{}.j2.123"
+        tmp_dir + "/test.{}" >> func2(func_kwargs=dict(j=".j2")) >> tmp_dir + "/test.{}.j2.123"
+
+        @nt(depended_pos=[-1])
+        def func3(i):
+            return i.replace_wildcard()
+        tmp_dir + "/test.{}" >> func3()                    >> tmp_dir + "/test_merge"
+
+        @nt
+        def func4(i):
+            return i.replace_wildcard()
+
+        tmp_dir + "/test.{}" >> func4(depended_pos=[-1])   >> tmp_dir + "/test_merge"
 
     def test_strange_case(self):
         """ unsupport method, but i test it, maybe someday will be move to TODO """
@@ -443,3 +382,63 @@ class TestTask(unittest.TestCase):
             "{tmp_dir}/test.0" >> "{tmp_dir}/test.0"
         with self.assertRaises(TypeError):
             f"{tmp_dir}/test.0" >> func >> f"{tmp_dir}/test.0.123"
+
+
+class TestExecutor(unittest.TestCase):
+    def setUp(self):
+        self.tmp_dir = "/tmp/test"
+        Path(self.tmp_dir).mkdir()
+        Path(f"{self.tmp_dir}/test.0.txt").touch()
+        Path(f"{self.tmp_dir}/test.1.txt").touch()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_dir)
+
+    def assertLeng(self, arr: Iterable, num: int):
+        self.assertEqual(len(list(arr)), num)
+
+    def test_concurrent(self):
+        """ Change the executor to concurrent running the tasks """
+        tmp_dir = self.tmp_dir
+
+        # set global executor
+        from namepipe.executor import BaseTaskExecutor, ConcurrentTaskExecutor
+        NameTask.set_default_executor(ConcurrentTaskExecutor())
+        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
+        NameTask.set_default_executor(BaseTaskExecutor())
+
+        # set the task with speicfic executor
+        tmp_dir + "/test.{}" >> NameTask(func=subtask).set_executor(ConcurrentTaskExecutor()) >> tmp_dir + "/test.{}.test2.{}"
+        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
+
+    def test_standalone(self):
+        """ Change the StandaloneTaskExecutor """
+        ori_dir = os.getcwd()
+        os.chdir(ori_dir + "/tests")  # fix pytest error
+        tmp_dir = self.tmp_dir
+
+        from namepipe.executor import BaseTaskExecutor, StandaloneTaskExecutor
+        NameTask.set_default_executor(StandaloneTaskExecutor(auto_cleanup=False))
+        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4)
+
+        # check temp files
+        job_files = list(filter(lambda i: "job_" in str(i), os.listdir()))
+        self.assertLeng(job_files, 4)
+        self.assertLeng(filter(lambda i: i.endswith(".in"), job_files), 2)
+        self.assertLeng(filter(lambda i: i.endswith(".out"), job_files), 2)
+
+        # auto_cleanup = True
+        # and test depended
+        NameTask.set_default_executor(StandaloneTaskExecutor())
+        tmp_dir + "/test.{}" >> NameTask(func=subtask3, depended_pos=[-1]) >> tmp_dir + "/test.{}.test3.{}"
+        self.assertLeng(Path(tmp_dir).iterdir(), 2 + 4 + 2)
+        job_files = list(filter(lambda i: "job_" in str(i), os.listdir()))
+        self.assertLeng(job_files, 4)
+
+        # set it back
+        # use auto cleanup to remove temp job_*
+        tmp_dir + "/test.{}" >> NameTask(func=subtask) >> tmp_dir + "/test.{}.test2.{}"
+        os.chdir(ori_dir)
+        NameTask.set_default_executor(BaseTaskExecutor())

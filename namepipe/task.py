@@ -23,6 +23,7 @@ class NameTask:
     def __init__(
         self,
         func=None,
+        func_kwargs: dict = {},
         depended_pos: list[str | int] = [],
         executor: BaseTaskExecutor | None = None,
     ):
@@ -31,7 +32,7 @@ class NameTask:
             self.func: Callable = task.func
             self.depended_pos: list[str | int] = task.depended_pos
             self.executor: BaseTaskExecutor | None = task.executor
-        self.func = partial(func)
+        self.func = partial(func, **func_kwargs)
         self.depended_pos = depended_pos
         self.executor = executor
         # each instance
@@ -173,11 +174,9 @@ class NameTask:
         return compose([self, others])
 
 
-def nt(func):
+def nt(func=None, /, **kwargs):
     """
     A decorator to create a NameTask() instance
-
-    But creating the instance makes multiprocessing fail
 
     Example:
       ``` python
@@ -188,16 +187,29 @@ def nt(func):
           ...
           return input_name + ".test"
 
+      @nt(depended_pos=[-1])
       def doSomething1(input_name):
           ...
-          return input_name + ".test1"
+          return input_name.replace_wildcard()
 
-      "" >> doSomething
-      # or (better)
-      "" >> nt(doSomething1)
+      "" >> doSomething()
+      # or
+      "" >> doSomething1()
+      # or (fine. just overwrite the value)
+      "" >> doSomething1(depended_pos=[-1])
+      # or
+      "" >> doSomething(depended_pos=[-1])
+
+      # set parameters
+      "" >> doSomething(func_kwargs=dict(index="index_path"))
       ```
     """
-    return NameTask(func=func)
+    def _nt(func):
+        return partial(NameTask, func=func, **kwargs)
+    if func:  # decorator itself
+        return _nt(func)
+    else:  # decorator with parameters
+        return _nt
 
 
 def compose(
