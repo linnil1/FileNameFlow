@@ -1,4 +1,5 @@
 import time
+import uuid
 import pickle
 import logging
 import traceback
@@ -7,6 +8,7 @@ import importlib.util
 import multiprocessing
 from typing import Callable, Any
 from pathlib import Path
+from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 import __main__
 
@@ -81,13 +83,19 @@ class ConcurrentTaskExecutor(BaseTaskExecutor):
 class StandaloneTaskExecutor(BaseTaskExecutor):
     """ A standalone way to execute the task """
 
-    def __init__(self, threads: int | None = None, auto_cleanup: bool = True):
+    def __init__(
+        self,
+        threads: int | None = None,
+        auto_cleanup: bool = True,
+        filename_template: str = "job_{time}_{input_name}"
+    ):
         super().__init__()
         if threads:
             self.threads = threads
         else:
             self.threads = multiprocessing.cpu_count()
         self.auto_cleanup = auto_cleanup
+        self.filename_template = filename_template
 
     @classmethod
     def import_func_in_main_namespace(cls, path: str) -> None:
@@ -145,12 +153,23 @@ class StandaloneTaskExecutor(BaseTaskExecutor):
 
     def setup_standalone_task(self, func: Callable, input_name: NamePath) -> str:
         """ Setup the data needed for standalone task (job_name.in). """
-        name = "job_" + str(input_name).replace("/", "_")
+        name = self.filename_template.format(
+            time=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"),
+            input_name=str(input_name).replace("/", "_"),
+            random=str(uuid.uuid4())[:8],
+        )
+        Path(name).parent.mkdir(exist_ok=True)
         # create tmp input parameters and executor
+        Path(f"{name}.out").unlink(missing_ok=True)
         self._logger.debug(f"Write {name}.in")
         with open(f"{name}.in", "wb") as f:
             pickle.dump((func, input_name), f, pickle.HIGHEST_PROTOCOL)
         return name
+
+    def cleanup_task(self, name: str):
+        """ Remove data """
+        Path(f"{name}.in").unlink()
+        Path(f"{name}.out").unlink()
 
     def run_tasks(self, names: list[NamePath], func: Callable) -> list[NamePath | str]:
         """
@@ -190,8 +209,7 @@ class StandaloneTaskExecutor(BaseTaskExecutor):
             with open(output_file, "rb") as f:
                 output_name.append(pickle.load(f))
             if self.auto_cleanup:
-                Path(f"{name}.in").unlink()
-                Path(f"{name}.out").unlink()
+                self.cleanup_task(name)
         self._logger.info(f"{len(exes)} tasks done")
 
         # raise error and print the error message if return Error

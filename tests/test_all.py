@@ -346,7 +346,9 @@ class TestTask(unittest.TestCase):
         @nt
         def func1(i):
             return i + ".123"
-        tmp_dir + "/test.{}" >> func1()                    >> tmp_dir + "/test.{}.123"
+        tmp_dir + "/test.{}" >> func1()            >> tmp_dir + "/test.{}.123"
+        NamePath(tmp_dir + "/test.{}") >> func1()  >> tmp_dir + "/test.{}.123"
+        NamePath(tmp_dir + "/test.{}") >> func1    >> tmp_dir + "/test.{}.123"
 
         @nt
         def func2(i, j=".j"):
@@ -357,13 +359,13 @@ class TestTask(unittest.TestCase):
         @nt(depended_pos=[-1])
         def func3(i):
             return i.replace_wildcard()
-        tmp_dir + "/test.{}" >> func3()                    >> tmp_dir + "/test_merge"
+        tmp_dir + "/test.{}" >> func3()                  >> tmp_dir + "/test_merge"
 
         @nt
         def func4(i):
             return i.replace_wildcard()
 
-        tmp_dir + "/test.{}" >> func4(depended_pos=[-1])   >> tmp_dir + "/test_merge"
+        tmp_dir + "/test.{}" >> func4(depended_pos=[-1]) >> tmp_dir + "/test_merge"
 
     def test_strange_case(self):
         """ unsupport method, but i test it, maybe someday will be move to TODO """

@@ -237,6 +237,8 @@ def compose(
     for item in func_list:
         if isinstance(item, NameTask):
             b: NameTask | NamePath = item
+        elif isinstance(item, partial) and item.func is NameTask:
+            b = item()
         elif isinstance(item, Callable):  # type: ignore
             b = NameTask(func=item)
         elif isinstance(item, (NamePath, str)):
