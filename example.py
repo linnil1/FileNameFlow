@@ -1,4 +1,3 @@
-import os
 import logging
 import subprocess
 from pathlib import Path
@@ -9,161 +8,94 @@ from namepipe import NamePath, NameTask, compose, nt
 # logging.basicConfig(level=logging.DEBUG)
 
 
-def run(cmd):
+threads = 14  # manually maintain resources
+
+
+def run(cmd: str) -> None:
     """ Execute shell script """
     print(cmd)
     # Don't execute your script like this
     # It is very dangerous
-    proc = subprocess.run(cmd, shell=True)
-    proc.check_returncode()
+    proc = subprocess.run(cmd, shell=True, check=True)
 
 
-def checkExist(name):
-    assert Path(name).exists()
-
-
-def createFastq(input_name):
+def createFastq(input_name: NamePath) -> str:
     """ 0 -> many """
-    input_name = os.path.join(input_name, "test")  # type: str
+    output_name = "data/test"
+    Path("data").mkdir(exist_ok=True)
     for i in range(2):
-        run(f"echo {i}_1 > {input_name}.{i}.read.1.fq.gz")
-        run(f"echo {i}_2 > {input_name}.{i}.read.2.fq.gz")
-        checkExist(f"{input_name}.{i}.read.1.fq.gz")
-        checkExist(f"{input_name}.{i}.read.2.fq.gz")
-    # input_name is str type
-    # so this return str
-    # It's ok for 0 -> any case
-    return input_name + ".{}.read"
+        if Path(f"{output_name}.{i}.read.1.fq.gz").exists():  # skip when file exists
+            continue
+        run(f"echo sample{i}_read_1 > {output_name}.{i}.read.1.fq.gz")
+        run(f"echo sample{i}_read_2 > {output_name}.{i}.read.2.fq.gz")
+    return output_name + ".{}.read"  # It's OK to return str instead of NamePath
 
 
-def createBwaIndex(input_name):
+def downloadReference(input_name: NamePath) -> str:
     """ 0 -> 1 """
-    output_file = os.path.join(input_name, "bwa")
-    run(f"echo create Index > {output_file}.index")
-    checkExist(output_file + ".index")
-    # Return str. OK. for 0 -> 1 case
-    return output_file
-
-
-def bwa(input_name, index):
-    """ 1 -> 1 """
-    checkExist(index + ".index")
-    checkExist(input_name + ".1.fq.gz")
-    checkExist(input_name + ".2.fq.gz")
-    f1, f2 = f"{input_name}.1.fq.gz", f"{input_name}.2.fq.gz"
-    suffix = ".bwa." + index.replace("/", "_")
-    output_name = input_name + suffix  # type: NamePath
-    run(f"echo mapped {f1} {f2} by bwa with index {index} > {output_name}.bam")
-    checkExist(output_name + ".bam")
-
-    # str(output_name) == test.1.read.bwa_index_bwa
-    # output_name is NamePath type
-    # or you can return "test.{}.read.bwa_index_bwa" (str type)
-    # which stored in output_name.template
+    output_name = "index/hg19"  # type: str
+    if Path(f"{output_name}.fa").exists():  # skip when file is downloaded
+        return output_name
+    Path("index").mkdir(exist_ok=True)
+    run(f"echo create Index > {output_name}.fa ")
     return output_name
 
 
-def extractChr(input_name):
-    """
-    few -> many
-    = for each name
-        1 -> many
-    """
-    f_bam = f"{input_name}.bam"
-    checkExist(f_bam)
+def createBwaIndex(input_name: NamePath) -> NamePath:
+    """ 1 -> 1 """
+    output_name = input_name + ".bwa"  # type: NamePath
+    if Path(f"{output_name}.bwt").exists():  # skip when index is built
+        return output_name
+    run(f"echo create Index {input_name}.fa > {output_name}.bwt")
+    return output_name
+
+
+def bwa(input_name: NamePath, index: str) -> NamePath:
+    """ 1 -> 1 """
+    f1, f2 = f"{input_name}.1.fq.gz", f"{input_name}.2.fq.gz"
+    # if Path(f"{output_name}.bam").exists():  # you can write your own skip pattern
+    output_name = input_name + "." + index.replace("/", "_").replace(".", "_")
+    # output_name type: NamePath
+    run(f"echo mapped {f1} {f2} by bwa with index {index}.bwt (threads={threads}) > {output_name}.bam")
+    return output_name
+
+
+def splitChr(input_name: NamePath) -> NamePath:
+    """ 1 -> many """
     output_name = input_name + ".splitchr.{}"  # type: NamePath
     chrs = ["chr1", "chr2"]
-    if ".1." in input_name:
-        chrs.append("chr3")
     for chr in chrs:
-        run(f"echo {f_bam} extract chr1 > {output_name.format(chr)}.bam")
-        checkExist(f"{output_name.format(chr)}.bam")
+        run(f"echo {input_name}.bam extract chr1 > {output_name.format(chr)}.bam")
     return output_name
 
 
-def statChr(input_name):
+def statChr(input_name: NamePath) -> NamePath:
     """ 1 -> 1 """
-    checkExist(f"{input_name}.bam")
-    suffix = ".stat"
-    output_name = input_name + suffix
+    output_name = input_name + ".stat"
     run(f"echo stat {input_name}.bam > {output_name}.txt")
-    checkExist(f"{output_name}.txt")
-    # return output_name
-    # indeed we use the template in NamePath
-    return output_name.template
+    return output_name
 
 
-@nt(depended_pos=[-1])
-def mergeChr(input_name):
-    """
-    many -> fewer
-    name = xxx.{}.ooo.{}.aaa
-    input_name = xxx.00.oo.{}.aaa
-    output_name = xxx.00.oo_merge.aaa
-    """
-    input_names = input_name.get_input_names()
-    files = [name + ".txt" for name in input_names]
-    [checkExist(i) for i in files]
-    output_name = input_name.replace_wildcard("_merge_split_chr_stat")  # type: NamePath
+def mergeChr(input_name: NamePath) -> NamePath:
+    """ many -> 1 """
+    # input_name = xxx.00.oo.{}.aaa
+    # output_name = xxx.00.oo_merge.aaa
+    files = [name + ".txt" for name in input_name.list_names()]
+    output_name = input_name.replace_wildcard("_mergechr")  # type: NamePath
     run(f"echo merge {' '.join(files)} > {output_name}.csv")
-    checkExist(f"{output_name}.csv")
     return output_name
 
 
-def mergeStat(input_name):
-    """
-    many -> 1
-    splitchr.{}.csv => splitchr_merge.csv
-    splitchr.merge.csv may confused with splitchar.1.csv sokutcgr,2,csv
-    """
-    input_names = input_name.get_input_names()
-    files = [name + ".csv" for name in input_names]
-    [checkExist(i) for i in files]
-    output_name = input_name.replace_wildcard()
-    run(f"echo merge { ' '.join(files) } > {output_name}.csv")
-    checkExist(f"{output_name}.csv")
-    return output_name
+def printResult(input_name: NamePath) -> NamePath:
+    """ 1 -> 1 """
+    print(open(input_name + ".csv").read())
+    return input_name
 
 
-def create_folder(input_name, folder):
-    """ 0 -> 1 """
-    Path(folder).mkdir(exist_ok=True)
-    # return a str
-    checkExist(folder)
-    return folder
-
-
-def rename(input_name):
-    """
-    many to many
-    input: data/test.{}.read.bwa.index_bwa.splitchr.{}.stat.txt
-    output: data/stage2.{}.chr.{}
-    """
-    input_names = input_name.get_input_names()
-    output_name = "data/stage2.{}.chr.{}"  # type: str
-    for name in input_names:
-        checkExist(f"{name}.txt")
-        print(output_name, name.template_args)
-        output_file = output_name.format(*name.template_args)
-        run(f"ln -sf ../{name}.txt {output_file}.txt")
-        checkExist(f"{output_file}.txt")
-    # If you return str, make sure return the name with all wildcard = {}
-    return output_name
-
-
-def renameSwap(input_name):
-    """
-    1 to 1
-    rename sample.{1}.chr.{2} -> stage3.chr.{2}.sample.{1}
-    The wildcard 1 and 2 can be extracted from template_args
-    """
-    checkExist(f"{input_name}.txt")
-    args = input_name.template_args
-    assert len(args) == 2
-    output_name = "data/stage3.chr.{}.sample.{}"
-    output_file = output_name.format(args[1], args[0])
-    run(f"ln -sf {Path(input_name).name}.txt {output_file}.txt")
-    checkExist(f"{output_file}.txt")
+def mergeSample(input_name: NamePath) -> NamePath:
+    output_name = input_name.replace_wildcard("_mergesample")
+    files = [name + ".csv" for name in input_name.list_names()]
+    run(f"cat {' '.join(files)} > {output_name}.txt")
     return output_name
 
 
@@ -171,29 +103,28 @@ if __name__ == "__main__":
     from namepipe.executor import ConcurrentTaskExecutor
     from namepipe.executor import StandaloneTaskExecutor
     # NameTask.set_default_executor(ConcurrentTaskExecutor(mode="thread"))
-    NameTask.set_default_executor(StandaloneTaskExecutor())
+    # NameTask.set_default_executor(StandaloneTaskExecutor())
 
-    # 0 -> 1 -> 1
-    bwa_index = None >> NameTask(partial(create_folder, folder="index")) >> createBwaIndex >> "index/bwa"
+    bwa_index = NamePath("") \
+                >> downloadReference \
+                >> createBwaIndex \
+                >> "index/hg19.bwa"
+                # download reference  # index/hg19
+                # create bwa index    # index/hg19.bwa
+                # assert the path is   "index/hg19.bwa"
     print(bwa_index)
 
-    # 0 -> many -> (for each) 1 -> 1
-    # bwa_data = "." >> NameTask(create_folder)(folder="data") >> NameTask(createFastq) >> NameTask(bwa)(index=str(bwa_index))
-    bwa_data = NamePath(".") \
-               >> partial(create_folder, folder="data") \
-               >> createFastq \
-               >> partial(bwa, index=str(bwa_index))
-    # bwa_stat = bwa_data >> extractChr >> statChr >> NameTask(rename).set_depended([0, 1])
-    bwa_stat = compose([
-        bwa_data,
-        extractChr,
-        statChr,
-        NameTask(rename, depended_pos=[0, 1]),
+    bwa_data = compose([
+        "",                                     # start from nothing
+        createFastq,                            # 0 -> many   # data/test.{}.read
+        partial(bwa, index=str(bwa_index)),     # 1 -> 1      # data/test.{}.read.index_hg19_bwa
+        splitChr,                               # 1 -> many   # data/test.{}.read.index_hg19_bwa.splitchr.{}
+        statChr,                                # 1 -> 1      # data/test.{}.read.index_hg19_bwa.splitchr.{}.stat
+        NameTask(mergeChr, depended_pos=[-1]),  # many -> 1   # data/test.{}.read.index_hg19_bwa.splitchr_mergechr.stat.csv
+        printResult,                            # 1 -> 1      # data/test.{}.read.index_hg19_bwa.splitchr_mergechr.stat.csv
     ])
-    print(bwa_stat)
 
-    # result and swap_result is basically the same but use different strucutre
-    result = bwa_stat >> mergeChr() >> NameTask(mergeStat).set_depended(-1)
-    print(result)
-    swap_result = bwa_stat >> renameSwap >> mergeChr(depended_pos=[0]) >> NameTask(mergeStat).set_depended(0)
-    print(swap_result)
+    result = compose([
+        bwa_data,                                  # start from previous step  # data/test.{}.read.index_hg19_bwa.splitchr_mergechr.stat.csv
+        NameTask(mergeSample, depended_pos=[-1]),  # many -> 1                 # data/test_mergesample.read.index_hg19_bwa.splitchr_mergechr.stat.txt
+    ])
