@@ -14,7 +14,7 @@ import logging
 from .error import *
 
 
-_T = TypeVar("T")
+_T = TypeVar("_T")
 
 
 def unique(arr: Iterable[_T], key: Callable[[_T], Hashable]) -> Iterable[_T]:
