@@ -21,7 +21,7 @@ class FileNameTask:
 
     Args:
         func: A function that defines the task to be performed on given filename (path).
-        ungroup_by: A list of integers (for positional arguments) or strings (for keyword arguments)
+        fix: A list of integers (for positional arguments) or strings (for keyword arguments)
                     specifying which wildcards to ungroup.
         executor: An optional custom executor to use for the task.
 
@@ -29,7 +29,7 @@ class FileNameTask:
     * Usage 1:
         Wrap the function to FileNameTask Object
         ```python
-        @FileNameTask.wrapper(ungroup_by=[-1])
+        @FileNameTask.wrapper(fix=[-1])
         def func_manyto1(input_name, other_arg="1"):
             return input_name.replace_wildcard()
         "data.{}.arg1" >> func_manyto1
@@ -42,7 +42,7 @@ class FileNameTask:
         def func_manyto1(input_name):
             return input_name.replace_wildcard()
 
-        "data.{}.arg1" >> FileNameTask(func_manyto1, ungroup_by=[-1])
+        "data.{}.arg1" >> FileNameTask(func_manyto1, fix=[-1])
         ```
     * Usage 3:
         Execute the task by compose
@@ -75,12 +75,12 @@ class FileNameTask:
     def __init__(
         self,
         func: FileNameTaskFunc = lambda i: i,
-        ungroup_by: Iterable[str | int] = (),
+        fix: Iterable[str | int] = (),
         executor: FileNameBaseExecutor | None = None,
     ):
         if isinstance(func, FileNameTask):
             self.func: FileNameTaskFunc = func.func
-            self.ungroup_by: Iterable[str | int] = func.ungroup_by
+            self.fix: Iterable[str | int] = func.fix
             self.executor: FileNameBaseExecutor = func.executor
         elif isinstance(func, Callable):  # type: ignore
             self.func = func
@@ -90,7 +90,7 @@ class FileNameTask:
             )
 
         # sdaved attrs
-        self.ungroup_by = ungroup_by
+        self.fix = fix
         self.input_path: FileNamePath | None = None
         self.output_path: FileNamePath | None = None
 
@@ -104,7 +104,7 @@ class FileNameTask:
         return (
             f"FileNameTask(func={self.func} "
             f"input={self.input_path} "
-            f"ungroup_by={self.ungroup_by} "
+            f"fix={self.fix} "
             f"output={self.output_path})"
         )
 
@@ -119,7 +119,7 @@ class FileNameTask:
         """Deep copy this Object"""
         return FileNameTask(
             func=copy.deepcopy(self.func, memo),
-            ungroup_by=copy.deepcopy(self.ungroup_by, memo),
+            fix=copy.deepcopy(self.fix, memo),
             executor=self.executor,  # deepcopy this will cause error when parallel start
         )
 
@@ -154,8 +154,8 @@ class FileNameTask:
         return task
 
     def _list(self, path: FileNamePath, sort: bool = False) -> Iterable[FileNamePath]:
-        """List the filename by given ungroup_by"""
-        paths = path.list(self.ungroup_by)
+        """List the filename by given fix"""
+        paths = path.list(self.fix)
         if sort:
             paths = sorted(paths)
         files_num = 0
@@ -216,7 +216,7 @@ class FileNameTask:
         def doSomething(input_name):
             return input_name + ".test"
 
-        @FileNameTask.wrapper(ungroup_by=[-1])
+        @FileNameTask.wrapper(fix=[-1])
         def doSomething1(input_name):
             return input_name.replace_wildcard()
         ```
@@ -234,9 +234,7 @@ class FileNameTask:
 
 
 def compose(
-    func_list: Iterable[
-        FileNameTask | FileNamePath | Callable[..., FileNameTaskOutput] | str
-    ],
+    func_list: Iterable[FileNameTask | FileNamePath | FileNameTaskFunc | str],
 ) -> FileNameTask | FileNamePath:
     """
     Compose and execute a sequence of tasks in a pipeline.

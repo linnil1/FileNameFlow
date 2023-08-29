@@ -35,7 +35,7 @@ def subtask_manyto1(input_name):
     return output_name
 
 
-@FileNameTask.wrapper(ungroup_by=[-1])
+@FileNameTask.wrapper(fix=[-1])
 def func_wrap1_manyto1(input_name):
     return subtask_manyto1(input_name)
 
@@ -78,7 +78,7 @@ class TestTask(unittest.TestCase):
         b = FileNameTask(subtask_1tomany).run(a).output
         self.assertEqual(b, str(a) + ".t1M.{}")
 
-        c = FileNameTask(subtask_manyto1, ungroup_by=[-1]).run(b).output
+        c = FileNameTask(subtask_manyto1, fix=[-1]).run(b).output
         self.assertEqual(c, str(a) + ".t1M_merge_this")
 
         with self.assertRaises(FileNameFlowError):
@@ -102,7 +102,7 @@ class TestTask(unittest.TestCase):
                 partial(subtask_1to1, test_arg="test3"),
                 subtask_1tomany,
                 partial(subtask_1to1),
-                FileNameTask(subtask_manyto1, ungroup_by=[-1]),
+                FileNameTask(subtask_manyto1, fix=[-1]),
                 FileNamePath(f"{self.tmp_dir}/init.t11test3.t1M_merge_this.t11"),
             ]
         )
@@ -118,6 +118,6 @@ class TestTask(unittest.TestCase):
         (
             self.tmp_dir + "/init"
             >> FileNameTask(subtask_1tomany)
-            >> FileNameTask(func_wrap2_manyto1, ungroup_by=[-1])
+            >> FileNameTask(func_wrap2_manyto1, fix=[-1])
             >> self.tmp_dir + "/init.t1M_merge_this"
         )

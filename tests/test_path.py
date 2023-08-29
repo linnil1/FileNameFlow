@@ -145,12 +145,8 @@ class TestPath(unittest.TestCase):
         self.assertLeng(FileNamePath(tmp_dir + "/test.{}.test2.{}").list(), 5)
         self.assertLeng(FileNamePath(tmp_dir + "/test.{}.test2.{}.txt").list(), 5)
         self.assertLeng(FileNamePath(tmp_dir + "/test.{}").list(), 2)
-        self.assertLeng(
-            FileNamePath(tmp_dir + "/test.{}.test2.{}").list(exclude=[0]), 3
-        )
-        self.assertLeng(
-            FileNamePath(tmp_dir + "/test.{}.test2.{}").list(exclude=[1]), 2
-        )
+        self.assertLeng(FileNamePath(tmp_dir + "/test.{}.test2.{}").list(fix=[0]), 3)
+        self.assertLeng(FileNamePath(tmp_dir + "/test.{}.test2.{}").list(fix=[1]), 2)
 
         # list with arg/kwargs
         a = FileNamePath.construct(tmp_dir + "/test.{}.test2.{}", ("*", "a"), {})

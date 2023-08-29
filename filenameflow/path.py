@@ -87,8 +87,8 @@ class FileNamePath(str):
         After listing, the number of variables in `args` and `kwargs` is preserved, but their values change.
         For example, `test.sample1.regression.lasso` has `args` set to `["sample1"]` instead of `["*"]`.
 
-        Another argument for the `list` method is `exclude`, which allows you to exclude specific variables from the listing.
-        Example: `FileNamePath("test.{}.regression.{}").list(exclude=(0, ))` would yield:
+        Another argument for the `list` method is `fix`, which allows you to fix specific variables from the listing.
+        Example: `FileNamePath("test.{}.regression.{}").list(fix=(0, ))` would yield:
 
         * `test.{}.regression.lasso` (with `args=["*", "lasso"]`)
         * `test.{}.regression.elastic`
@@ -298,14 +298,14 @@ class FileNamePath(str):
         """
         return FileNamePath(str(self))
 
-    def list(self, exclude: Iterable[str | int] = ()) -> Iterable[FileNamePath]:
+    def list(self, fix: Iterable[str | int] = ()) -> Iterable[FileNamePath]:
         """
         List files that match the current(self)'s name.
 
         Example:
             ```
             Path: "cohort.{}.regression.{}"
-            exclude: [1]
+            fix: [1]
             # then Return:
             * `cohort.sample1.regression.{}`
             * `cohort.sample2.regression.{}`
@@ -313,7 +313,7 @@ class FileNamePath(str):
             ```
 
         Args:
-            exclude: The index of arg, kwargs that keep unlisted.
+            fix: The index of arg, kwargs that keep unlisted.
                      Note that the index is the wildcard's index on path, not the index in template.
         """
         # list files that match the glob pattern
@@ -329,8 +329,8 @@ class FileNamePath(str):
         paths: Iterable[FileNamePath] = filter(None, paths_or_err)
         paths = unique(paths, str)
 
-        # apply exclude arg
-        wildcard_kv = tuple(zip(exclude, repeat("*")))
+        # apply fix arg
+        wildcard_kv = tuple(zip(fix, repeat("*")))
         paths = map(lambda path: path.overwrites(wildcard_kv), paths)
         paths = unique(paths, str)
 
