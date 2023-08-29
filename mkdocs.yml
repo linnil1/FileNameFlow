@@ -1,4 +1,4 @@
-site_name: namepipe
+site_name: FileNameFlow
 repo_url: https://github.com/linnil1/name-based-pipeline
 theme:
   name: material
@@ -22,7 +22,7 @@ plugins:
           separate_signature: False
           show_if_no_docstring: True
     watch:
-      - namepipe
+      - filenameflow
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.inlinehilite

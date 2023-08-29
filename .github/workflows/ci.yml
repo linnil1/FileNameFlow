@@ -1,27 +1,44 @@
 name: Test and Deploy document
-on:
-  push:
-    branches:
-      - main
+on: push
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - name: Install packages for testing
-        run: pip install pytest pycodestyle mypy
-      - name: Install this package
-        run: pip install .
-      - name: Test code logic
-        run: pytest
-      - name: Test code style
-        run: pycodestyle namepipe
-      - name: Test code typing
-        run: mypy namepipe
-      - name: Install packages for deploying documentation on web
-        run: pip install mkdocs-material mkdocstrings[python]
-      - name: Deploy on github web
-        run: mkdocs gh-deploy --force
+      - run: pip install pytest black mypy build
+      - run: pip install .
+      - run: pytest
+      - run: black --check filenameflow
+      - run: mypy filenameflow
+      - run: python3 -m build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+  page-deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - run: pip install mkdocs-material mkdocstrings[python]
+      - run: mkdocs gh-deploy --force
+
+  pypi-deploy:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    environment:
+      name: pypi-deploy
+      url: https://pypi.org/p/filenameflow
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

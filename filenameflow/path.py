@@ -50,29 +50,29 @@ class FileNamePath(str):
     This class extends the functionality of Python's built-in `str` type.
 
     Wildcards:
-    The FileNamePath class uses `{}` as wildcard characters and `*` as wildcard variables in both args and kwargs.
+    The FileNamePath class uses `{}` as wildcard characters and `*` as value in both args and kwargs.
 
     Example:
-    * With args:
-        * self: `test.sample.regression.lasso`
-        * template: `test.{}.regression.{}`
-        * args: [`"sample", "lasso"]`
+        * With args:
+            * self: `test.sample.regression.lasso`
+            * template: `test.{}.regression.{}`
+            * args: [`"sample", "lasso"]`
 
-    * With args containing a wildcard:
-        * self: `test.{}.regression.lasso`
-        * template: `test.{}.regression.{}`
-        * args: `["*", "lasso"]`
+        * With args containing a wildcard:
+            * self: `test.{}.regression.lasso`
+            * template: `test.{}.regression.{}`
+            * args: `["*", "lasso"]`
 
-    * With kwargs:
-        * self: `test.{}.regression.{type}`
-        * template: `test.{}.regression.{type}`
-        * args: `["*"]`
-        * kwargs: `{"type": "*"}`
+        * With kwargs:
+            * self: `test.{}.regression.{type}`
+            * template: `test.{}.regression.{type}`
+            * args: `["*"]`
+            * kwargs: `{"type": "*"}`
+
 
     Features:
         FileNamePath's primary feature is the ability to list files based on patterns.
 
-        Example:
         `FileNamePath("test.{}.regression.lasso").list()` will list all files starting with `test.*.regression.lasso`
         while ignoring the file extension.
 
