@@ -1,14 +1,11 @@
 # FileNameFlow: A Filename-Driven Pipeline Framework
 
-FileNameFlow is a lightweight framework for data processing pipelines using filename patterns.
-Eliminate complex loops by harnessing the power of filename patterns with wildcards,
-effortlessly listing corresponding filenames.
-With task execution guided by these patterns,
-user only need to focus on individual functions while FileNameFlow handles the orchestration.
-Seamlessly integrate with distributed frameworks like Dask,
-extending resource management to PBS, SLURM, and any other distrubuted computation system.
-Whether it's bioinformatics or intricate data science tasks,
-FileNameFlow streamlines filename processing and boosts efficiency.
+FileNameFlow is a lightweight framework designed for data processing pipelines that rely on filenames with wildcard support.
+
+At its core, FileNameFlow emphasizes self-descriptive filenames, driving task execution based on these patterns.
+This approach simplifies data processing.
+
+FileNameFlow seamlessly integrates with distributed frameworks like Dask, expanding resource management capabilities to accommodate Concurrency, PBS, SLURM, and other distributed computation systems.
 
 
 ## Concept 1: Filename Selection Patterns
@@ -49,6 +46,8 @@ sample1.bowtie.filter.csv
 | `sample1.{}`  | `sample1.bwa` `sample1.bowtie` |
 | `sample1.{}.csv`  | `sample1.bwa.csv` `sample1.bowtie.csv` |
 | `sample1.{method}.csv`  | `sample1.bwa.csv` `sample1.bowtie.csv` |
+
+Kind Hint, you may use `ln -s` to rename the file to match the pattern.
 
 
 ### FileNamePath.list(fix)
@@ -209,26 +208,20 @@ With FileNameFlow, you can effortlessly adapt the filename pipeline to different
 
 ## Conclusion
 
-FileNameFlow offers several compelling advantages that make it a valuable tool for various data science tasks, particularly in bioinformatics:
+* **Streamlined Data Science**: Simplify file management and processing, perfect for bioinformatics tasks involving multiple file types.
+* **Simplicity**: FileNameFlow streamlines pattern matching and grouping with minimal syntax, resembling string operations while offering wildcard support.
+* **Self-Descriptive Filenames**: Each filename serves as a self-descriptive record of data processing steps, aiding in tracking and comprehension. It's like having automatic versioning as filenames adjust with pipeline changes.
+* **Flexible Filename Control**: Beyond automatic wildcard listing and task execution, users can implement various rules. This includes customizing filename edits (like adding suffixes), renaming, system calls, and task skipping.
+* **Dask Resource Support**: Harness the power of FileNameFlow's DaskExecutor to execute pipelines on various computational resources by given clusters (e.g. local, PBS, SLURM, ...).
+* **Python Integration**: FileNameFlow seamlessly integrates with Python. You can use any Python packages you want.
 
-* **Streamlined Data Science**: FileNameFlow is well-suited for data science, especially in bioinformatics, where multiple tools generate numerous files. It simplifies file management and processing.
-* **Self-Descriptive Names**: Each file's name serves as a self-contained record of the tasks performed on it. This self-description simplifies tracking and understanding data processing steps.
-* **Auto-Versioning**: Changing the pipeline order or altering arguments automatically leads to changes in filenames. This built-in versioning mechanism facilitates reproducibility and experimentation.
-* **Flexibility in Handling Filename**: FileNameFlow allows you to manage filename (i.e. prefix, suffix) within your task functions, offering flexibility and control over .
-* **Resource Management**: While FileNameFlow provides a powerful framework for data pipeline orchestration, it doesn't handle resource management like threads or memory usage. This approach keeps it lightweight and adaptable to various environments.
-* **Simplicity**: It offers a straightforward and intuitive syntax, minimizing the need for complex external functions or special syntax. This simplicity enhances ease of use and code readability.
-* **Task Skipping**: FileNameFlow allows you to specify whether specific steps should be skipped or executed if the corresponding files already exist. The skip mechanism is defined within the functions you write, keeping the framework's arguments and design simple.
-* **Handling Non-Patterned Files**: When dealing with files that don't conform to your desired filename pattern, FileNameFlow encourages a straightforward renaming process at the beginning of your pipeline, typically done using commands like `ln -s`  for symbolic links.
-* **Python-Based Pipelines**: FileNameFlow pipelines are implemented in Python, leveraging the language's extensive ecosystem of libraries and tools. This makes it easy to integrate with other Python-based data science libraries and workflows.
-* **Minimal Overhead**: FileNameFlow is lightweight and doesn't require additional databases or metadata storage. All information is derived directly from file existence and patterns.
-
-In summary, FileNameFlow empowers data scientists to efficiently manage and process data, fosters collaboration, and simplifies complex tasks while maintaining flexibility and transparency in file management. Its lightweight nature and intuitive design make it a valuable addition to your data science toolkit.
+In summary, FileNameFlow empowers data scientists to efficiently manage, process, and collaborate on data, while simplifying intricate tasks. Its versatility, simplicity, and integration make it an invaluable tool in the data science toolkit.
 
 
 ## Installation
 
 ```
-pip install git+https://github.com/linnil1/name-based-pipeline
+pip install git+https://linnil1.github.io/FileNameFlow
 ```
 
 
@@ -243,7 +236,7 @@ python example.py
 
 ## Document
 
-https://linnil1.github.io/name-based-pipeline
+https://linnil1.github.io/FileNameFlow
 
 ::: filenameflow.error
 ::: filenameflow.path

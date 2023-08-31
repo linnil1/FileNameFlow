@@ -1,5 +1,5 @@
 site_name: FileNameFlow
-repo_url: https://github.com/linnil1/name-based-pipeline
+repo_url: https://github.com/linnil1/FileNameFlow
 theme:
   name: material
   features:

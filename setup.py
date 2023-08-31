@@ -11,7 +11,7 @@ setuptools.setup(
     description="A Filename Driven pipeline framework",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/linnil1/name-based-pipeline",
+    url="https://github.com/linnil1/FileNameFlow",
     packages=setuptools.find_packages(),
     install_requires=[
         "parse",
