@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="filenameflow",
-    version="0.1.0",
+    version="0.1.1",
     author="linnil1",
     author_email="linnil1.886@gmail.com",
     description="A Filename Driven pipeline framework",

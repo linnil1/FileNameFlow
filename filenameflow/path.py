@@ -125,7 +125,13 @@ class FileNamePath(str):
 
         # str to template, arg, kwargs
         self.template = str(self)
-        _, self.args, self.kwargs = self.parse(str(self))
+        if (
+            "{" in self.template and "}" in self.template
+        ):  # treaky but works, make it faster
+            _, self.args, self.kwargs = self.parse(self.template)
+        else:
+            self.args = ()
+            self.kwargs = {}
 
     @classmethod
     def construct(
@@ -335,7 +341,7 @@ class FileNamePath(str):
         paths = unique(paths, str)
 
         # change path to self
-        paths_or_err = map(path.with_filename, paths)
+        paths_or_err = map(self.with_filename, paths)
         paths = filter(
             None, paths_or_err
         )  # This will not filter anything (just for type checking)
