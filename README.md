@@ -221,7 +221,7 @@ In summary, FileNameFlow empowers data scientists to efficiently manage, process
 ## Installation
 
 ```
-pip install git+https://linnil1.github.io/FileNameFlow
+pip install git+https://github.com/linnil1/FileNameFlow
 ```
 
 
