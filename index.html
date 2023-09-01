@@ -1,0 +1,2987 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.6">
+    
+    
+      
+        <title>FileNameFlow</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.0e669242.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="css/mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#filenameflow-a-filename-driven-pipeline-framework" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="FileNameFlow" class="md-header__button md-logo" aria-label="FileNameFlow" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FileNameFlow
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              FileNameFlow: A Filename-Driven Pipeline Framework
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/linnil1/FileNameFlow" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="FileNameFlow" class="md-nav__button md-logo" aria-label="FileNameFlow" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    FileNameFlow
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/linnil1/FileNameFlow" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    FileNameFlow: A Filename-Driven Pipeline Framework
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    FileNameFlow: A Filename-Driven Pipeline Framework
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#concept-1-filename-selection-patterns" class="md-nav__link">
+    Concept 1: Filename Selection Patterns
+  </a>
+  
+    <nav class="md-nav" aria-label="Concept 1: Filename Selection Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filenamepath" class="md-nav__link">
+    FileNamePath
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenamepathlistfix" class="md-nav__link">
+    FileNamePath.list(fix)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concept-2-managing-workflow-steps-in-filenames" class="md-nav__link">
+    Concept 2: Managing Workflow Steps in Filenames
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concept-3-combining-functions-like-a-pipeline" class="md-nav__link">
+    Concept 3: Combining Functions Like a Pipeline
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concept-4-shipping-your-pipeline-to-other-resources" class="md-nav__link">
+    Concept 4: Shipping Your Pipeline to Other Resources
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    Run
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#document" class="md-nav__link">
+    Document
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.error" class="md-nav__link">
+    error
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.error.FileNameFlowAssert" class="md-nav__link">
+    FileNameFlowAssert
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.error.FileNameFlowDataError" class="md-nav__link">
+    FileNameFlowDataError
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.error.FileNameFlowError" class="md-nav__link">
+    FileNameFlowError
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.path" class="md-nav__link">
+    path
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath" class="md-nav__link">
+    FileNamePath
+  </a>
+  
+    <nav class="md-nav" aria-label="FileNamePath">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.args" class="md-nav__link">
+    args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.kwargs" class="md-nav__link">
+    kwargs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.separator" class="md-nav__link">
+    separator
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.suffix_key" class="md-nav__link">
+    suffix_key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.template" class="md-nav__link">
+    template
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.__add__" class="md-nav__link">
+    __add__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.__radd__" class="md-nav__link">
+    __radd__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.__rrshift__" class="md-nav__link">
+    __rrshift__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.__rshift__" class="md-nav__link">
+    __rshift__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.apply" class="md-nav__link">
+    apply()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.applys" class="md-nav__link">
+    applys()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.commit" class="md-nav__link">
+    commit()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.construct" class="md-nav__link">
+    construct()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.get_args" class="md-nav__link">
+    get_args()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.is_file" class="md-nav__link">
+    is_file()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.list" class="md-nav__link">
+    list()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.list_args" class="md-nav__link">
+    list_args()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.overwrite" class="md-nav__link">
+    overwrite()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.overwrites" class="md-nav__link">
+    overwrites()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.parse" class="md-nav__link">
+    parse()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.replace_wildcard" class="md-nav__link">
+    replace_wildcard()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.path.FileNamePath.with_filename" class="md-nav__link">
+    with_filename()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.path.unique" class="md-nav__link">
+    unique()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.task" class="md-nav__link">
+    task
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTaskFunc" class="md-nav__link">
+    FileNameTaskFunc
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTaskOutput" class="md-nav__link">
+    FileNameTaskOutput
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask" class="md-nav__link">
+    FileNameTask
+  </a>
+  
+    <nav class="md-nav" aria-label="FileNameTask">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.executor" class="md-nav__link">
+    executor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.fix" class="md-nav__link">
+    fix
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.func" class="md-nav__link">
+    func
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.input_path" class="md-nav__link">
+    input_path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.output" class="md-nav__link">
+    output
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.output_path" class="md-nav__link">
+    output_path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.__call__" class="md-nav__link">
+    __call__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.__deepcopy__" class="md-nav__link">
+    __deepcopy__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.__repr__" class="md-nav__link">
+    __repr__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.__rrshift__" class="md-nav__link">
+    __rrshift__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.__rshift__" class="md-nav__link">
+    __rshift__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.run" class="md-nav__link">
+    run()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.set_default_executor" class="md-nav__link">
+    set_default_executor()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.task.FileNameTask.wrapper" class="md-nav__link">
+    wrapper()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.task.compose" class="md-nav__link">
+    compose()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.executor" class="md-nav__link">
+    executor
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.executor.DaskExecutor" class="md-nav__link">
+    DaskExecutor
+  </a>
+  
+    <nav class="md-nav" aria-label="DaskExecutor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.executor.DaskExecutor.client" class="md-nav__link">
+    client
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.executor.DaskExecutor.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.executor.DaskExecutor.run_task" class="md-nav__link">
+    run_task()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filenameflow.executor.FileNameBaseExecutor" class="md-nav__link">
+    FileNameBaseExecutor
+  </a>
+  
+    <nav class="md-nav" aria-label="FileNameBaseExecutor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.executor.FileNameBaseExecutor.post_task" class="md-nav__link">
+    post_task()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.executor.FileNameBaseExecutor.pre_task" class="md-nav__link">
+    pre_task()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameflow.executor.FileNameBaseExecutor.run_task" class="md-nav__link">
+    run_task()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="filenameflow-a-filename-driven-pipeline-framework">FileNameFlow: A Filename-Driven Pipeline Framework</h1>
+<p>FileNameFlow is a lightweight framework designed for data processing pipelines that rely on filenames with wildcard support.</p>
+<p>At its core, FileNameFlow emphasizes self-descriptive filenames, driving task execution based on these patterns.
+This approach simplifies data processing.</p>
+<p>FileNameFlow seamlessly integrates with distributed frameworks like Dask, expanding resource management capabilities to accommodate Concurrency, PBS, SLURM, and other distributed computation systems.</p>
+<h2 id="concept-1-filename-selection-patterns">Concept 1: Filename Selection Patterns</h2>
+<h3 id="filenamepath">FileNamePath</h3>
+<p>We use <code>FileNamePath</code> class to represented the name selection pattern.</p>
+<p>The <code>FileNamePath</code> will select the files by it's pattern while ignore the file extension.
+The wildcard charcter is <code>{}</code> but it exclude the filename when separator(<code>.</code>) in it.</p>
+<p>For example, if theres exists files:
+<div class="highlight"><pre><span></span><code>sample.00.read.1.fq.gz
+sample.00.read.2.fq.gz
+sample.00.bwa.bam
+sample.00.bwa.sort.bam
+sample.00.bwa.sort.bqsr.bam
+sample.01.read.1.fq.gz
+sample.01.read.2.fq.gz
+sample.01.bwa.bam
+sample.01.04.read.2.fq.gz
+sample1.bwa.csv
+sample1.bowtie.csv
+sample1.bowtie.filter.csv
+</code></pre></div></p>
+<table>
+<thead>
+<tr>
+<th>FileNamePath</th>
+<th>listed FileNamePath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sample.{}</code></td>
+<td><code>sample.00</code> <code>sample.01</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.bwa</code></td>
+<td><code>sample.00.bwa</code> <code>sample.01.bwa</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.bwa.sort</code></td>
+<td><code>sample.00.bwa.sort</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.read</code></td>
+<td><code>sample.00.read</code> <code>sample.01.read</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.read.{}</code></td>
+<td><code>sample.00.read.1</code> <code>sample.00.read.2</code> <code>sample.01.read.1</code> <code>sample.01.read.2</code></td>
+</tr>
+<tr>
+<td><code>sample.00.read.{}</code></td>
+<td><code>sample.00.read.1</code> <code>sample.00.read.2</code></td>
+</tr>
+<tr>
+<td><code>sample{}</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>sample.00.read</code></td>
+<td><code>sample.00.read</code></td>
+</tr>
+<tr>
+<td><code>sample1.{}</code></td>
+<td><code>sample1.bwa</code> <code>sample1.bowtie</code></td>
+</tr>
+<tr>
+<td><code>sample1.{}.csv</code></td>
+<td><code>sample1.bwa.csv</code> <code>sample1.bowtie.csv</code></td>
+</tr>
+<tr>
+<td><code>sample1.{method}.csv</code></td>
+<td><code>sample1.bwa.csv</code> <code>sample1.bowtie.csv</code></td>
+</tr>
+</tbody>
+</table>
+<p>Kind Hint, you may use <code>ln -s</code> to rename the file to match the pattern.</p>
+<h3 id="filenamepathlistfix">FileNamePath.list(fix)</h3>
+<p>Next, if you want to select a group instead of executing tasks one by one, you can use the <code>fix</code> argument to indicate that the wildcard character <code>{}</code> should remain fixed and unexpanded. This feature is especially useful for tasks that require a list of files as input.</p>
+<table>
+<thead>
+<tr>
+<th>FileNamePath</th>
+<th>fix</th>
+<th>listed FileNamePath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sample.{}</code></td>
+<td><code>[-1]</code></td>
+<td><code>sample.{}</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.bwa</code></td>
+<td><code>[-1]</code></td>
+<td><code>sample.{}.bwa</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.read.{}</code></td>
+<td><code>[-1]</code></td>
+<td><code>sample.00.read.{}</code> <code>sample.01.read.{}</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.read.{}</code></td>
+<td><code>[-2]</code></td>
+<td><code>sample.{}.read.1</code> <code>sample.{}.read.2</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.read.{}</code></td>
+<td><code>[-1. -2]</code></td>
+<td><code>sample.{}.read.{}</code></td>
+</tr>
+<tr>
+<td><code>sample.{}.read.{}</code></td>
+<td><code>[]</code></td>
+<td><code>sample.00.read.1</code> <code>sample.00.read.2</code> <code>sample.01.read.1</code> <code>sample.01.read.2</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="concept-2-managing-workflow-steps-in-filenames">Concept 2: Managing Workflow Steps in Filenames</h2>
+<p>In FileNameFlow, we adopt a straightforward approach to keep track of workflow steps.
+We save all the steps within the filename suffix,
+making it easy to understand what treatments have been applied to the data based on the filename.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Input</th>
+<th>Output</th>
+<th>File(we don't care)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>download</td>
+<td><code>.</code></td>
+<td><code>sample.00.read</code></td>
+<td><code>sample.00.read.1.fq.gz</code>, <code>sample.00.read.2.fq.gz</code></td>
+</tr>
+<tr>
+<td>bowtie2</td>
+<td><code>sample.00.read</code></td>
+<td><code>sample.00.read.bowtie_hg19</code></td>
+<td><code>sample.00.read.bowtie_hg19.sam</code></td>
+</tr>
+<tr>
+<td>sortBam</td>
+<td><code>sample.00.read.bowtie_hg19</code></td>
+<td><code>sample.00.read.bowtie_hg19.sort</code></td>
+<td><code>sample.00.read.bowtie_hg19.sort.bam</code></td>
+</tr>
+<tr>
+<td>GatkBqsr</td>
+<td><code>sample.00.read.bowtie_hg19.sort</code></td>
+<td><code>sample.00.read.bowtie_hg19.sort.bqsr</code></td>
+<td><code>sample.00.read.bowtie_hg19.sort.bqsr.bam</code></td>
+</tr>
+<tr>
+<td>GatkHC</td>
+<td><code>sample.00.read.bowtie_hg19.sort.bqsr</code></td>
+<td><code>sample.00.read.bowtie_hg19.sort.bqsr.hc</code></td>
+<td><code>sample.00.read.bowtie_hg19.sort.bqsr.hc.vcf.gz</code></td>
+</tr>
+</tbody>
+</table>
+<p>Furthermore, we incorporate parameters into the filenames to ensure that files generated with different parameters are kept separate. We use abbreviations when necessary to maintain readability.</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Input</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bowtie2(index="hs37d5")</td>
+<td><code>sample.00.read</code></td>
+<td><code>sample.00.read.bowtie_hg19</code></td>
+</tr>
+<tr>
+<td>bowtie2(index="hs38DH")</td>
+<td><code>sample.00.read</code></td>
+<td><code>sample.00.read.bowtie_hg38</code></td>
+</tr>
+</tbody>
+</table>
+<p>Our pipeline seamlessly handles suffix concatenation (<code>+</code>) or wildcard replacement (<code>apply</code>).
+Setting up pipelines is a breeze using <code>FileNamePath</code>,
+and you can define functions to handle each selected filename.</p>
+<p>Here's an example:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">filenameflow</span> <span class="kn">import</span> <span class="n">FileNamePath</span><span class="p">,</span> <span class="n">FileNameTask</span>
+
+<span class="k">def</span> <span class="nf">bowtie2</span><span class="p">(</span><span class="n">input_name</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="c1"># The function are called two times</span>
+    <span class="c1"># where input_name =</span>
+    <span class="c1"># 1. sample.00.read.{}</span>
+    <span class="c1"># 2. sample.01.read.{}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span>
+    <span class="n">output_name</span> <span class="o">=</span> <span class="n">input_name</span> <span class="o">+</span> <span class="s2">&quot;.bowtie&quot;</span> <span class="o">+</span> <span class="n">index</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>  <span class="c1"># concat the suffix you want</span>
+
+    <span class="n">fqs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">input_name</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>  <span class="c1"># use build-in list to list the current path e.g. sample.00.read.1, sample.00.read.2</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;echo bowtie </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">fqs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.fq </span><span class="si">{</span><span class="n">fqs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">.fq -o </span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">.sam&quot;</span><span class="p">)</span>  <span class="c1"># FileNamePath works like str</span>
+    <span class="k">return</span> <span class="n">output_name</span>  <span class="c1"># return the result name for furthur task chaining</span>
+
+<span class="c1"># Using FileNamePath to kick start:</span>
+<span class="c1"># FileNamePath(&quot;sample.{}.read.{}&quot;) &gt;&gt; partial(bowtie2, index=&quot;index/hg19&quot;)</span>
+<span class="c1"># or using FileNameTask to start</span>
+<span class="s2">&quot;sample.</span><span class="si">{}</span><span class="s2">.read.</span><span class="si">{}</span><span class="s2">&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">FileNameTask</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">bowtie2</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;index/hg19&quot;</span><span class="p">),</span> <span class="n">fix</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</code></pre></div></p>
+<p>FileNameFlow simplifies complex data processing workflows by emphasizing functions for handling selected filenames,
+significantly reducing the need for extensive loops in your code.</p>
+<h2 id="concept-3-combining-functions-like-a-pipeline">Concept 3: Combining Functions Like a Pipeline</h2>
+<p>In this concept, we combine the previously discussed concepts into our pipeline.
+For a complete code example, please refer to the <code>example.py</code> file in the GitHub repository.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">input_name</span><span class="p">):</span>
+    <span class="c1"># 1(indeed 0) -&gt; many</span>
+    <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;data/xxx.</span><span class="si">{}</span><span class="s2">.read&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">FileNamePath</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">()):</span>  <span class="c1"># skip the step if file is downloaded</span>
+        <span class="k">return</span> <span class="n">output_name</span>
+    <span class="c1"># wget ...</span>
+    <span class="k">return</span> <span class="n">output_name</span>
+
+<span class="k">def</span> <span class="nf">bowtie2</span><span class="p">(</span><span class="n">input_name</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="c1"># 1 -&gt; 1</span>
+    <span class="c1"># input_name = &quot;data/xxx.{}.read&quot;</span>
+    <span class="c1"># output_name = &quot;data/xxx.{}.read.index_hs37d5&quot;</span>
+    <span class="n">output_name</span> <span class="o">=</span> <span class="n">input_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">index</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.sam&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>  <span class="c1"># skip the step if file exists</span>
+        <span class="k">return</span> <span class="n">output_name</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bwa </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">.1.fq </span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">.2.fq -o </span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">.sam&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_name</span>
+
+<span class="k">def</span> <span class="nf">mergeCSV</span><span class="p">(</span><span class="n">input_name</span><span class="p">):</span>
+    <span class="c1"># many -&gt; 1</span>
+    <span class="c1"># input_name = &quot;data/xxx.{}.read.index_hs37d5.depth&quot;</span>
+    <span class="c1"># output_name = &quot;data/xxx_merge.read.index_hs37d5.depth&quot;</span>
+    <span class="n">output_name</span> <span class="o">=</span> <span class="n">input_name</span><span class="o">.</span><span class="n">replace_wildcard</span><span class="p">(</span><span class="s2">&quot;_merge&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">output_name</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">input_name</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">files</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_name</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_name</span>
+
+<span class="k">def</span> <span class="nf">summaryCSV</span><span class="p">(</span><span class="n">input_name</span><span class="p">):</span>
+    <span class="c1"># 1 -&gt; 1</span>
+    <span class="c1"># doesn&#39;t change the suffix</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;chrom&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">input_name</span>
+
+<span class="c1"># using &gt;&gt; to chain the tasks</span>
+<span class="n">FileNamePath</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">download</span> <span class="o">&gt;&gt;</span> <span class="n">partial</span><span class="p">(</span><span class="n">bowtie2</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;index/hs37d5&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">sortBam</span> <span class="o">&gt;&gt;</span> <span class="n">getLowReadDepthPos</span> <span class="o">&gt;&gt;</span> <span class="n">FileNameTask</span><span class="p">(</span><span class="n">mergeCSV</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;&gt;</span> <span class="n">summaryCSV</span>
+<span class="c1"># Or using compose</span>
+<span class="kn">from</span> <span class="nn">filenameflow</span> <span class="kn">import</span> <span class="n">compose</span>
+<span class="n">compose</span><span class="p">([</span>
+    <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">download</span><span class="p">,</span>                                <span class="c1"># 0 to many</span>
+    <span class="n">partial</span><span class="p">(</span><span class="n">bowtie2</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;index/hs37d5&quot;</span><span class="p">),</span>  <span class="c1"># 1 to 1</span>
+    <span class="n">sortBam</span><span class="p">,</span>                                 <span class="c1"># 1 to 1</span>
+    <span class="n">getLowReadDepthPos</span><span class="p">,</span>                      <span class="c1"># 1 to 1</span>
+    <span class="n">FileNameTask</span><span class="p">(</span><span class="n">mergeCSV</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>        <span class="c1"># many to 1</span>
+    <span class="n">summaryCSV</span><span class="p">,</span>                              <span class="c1"># 1 to 1</span>
+<span class="p">])</span>
+</code></pre></div>
+<p>Our pipeline appears as a simple flow due to the list already being saved in the filename pattern,
+eliminating the need for explicit loops.</p>
+<h2 id="concept-4-shipping-your-pipeline-to-other-resources">Concept 4: Shipping Your Pipeline to Other Resources</h2>
+<p>We provide two basic executors for your convenience:</p>
+<ul>
+<li>FileNameBaseExecutor (Default): Executes tasks one by one.</li>
+<li>DaskExecutor: Executes tasks using Dask, allowing you to leverage various computational resources. Refer to <a href="https://docs.dask.org/en/stable/deploying.html">Dask</a> for available resource options.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">filenameflow.executor</span> <span class="kn">import</span> <span class="n">DaskExecutor</span>
+<span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">LocalCluster</span>
+
+<span class="c1"># Set up a DaskExecutor with a LocalCluster</span>
+<span class="n">exe</span> <span class="o">=</span> <span class="n">DaskExecutor</span><span class="p">(</span><span class="n">LocalCluster</span><span class="p">())</span>
+<span class="n">FileNameTask</span><span class="o">.</span><span class="n">set_default_executor</span><span class="p">(</span><span class="n">exe</span><span class="p">)</span>
+
+<span class="c1"># Set the executor for a specific task</span>
+<span class="s2">&quot;.&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">download</span> <span class="o">&gt;&gt;</span> <span class="n">FileNameTask</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">bowtie2</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;index/hs37d5&quot;</span><span class="p">),</span> <span class="n">executor</span><span class="o">=</span><span class="n">exe</span><span class="p">)</span>
+<span class="c1"># Or set it globally</span>
+<span class="n">FileNameTask</span><span class="o">.</span><span class="n">set_default_executor</span><span class="p">(</span><span class="n">exe</span><span class="p">)</span>
+<span class="s2">&quot;.&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">download</span> <span class="o">&gt;&gt;</span> <span class="n">partial</span><span class="p">(</span><span class="n">bowtie2</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;index/hs37d5&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>With FileNameFlow, you can effortlessly adapt the filename pipeline to different computation environments for efficient data processing.</p>
+<h2 id="conclusion">Conclusion</h2>
+<ul>
+<li><strong>Streamlined Data Science</strong>: Simplify file management and processing, perfect for bioinformatics tasks involving multiple file types.</li>
+<li><strong>Simplicity</strong>: FileNameFlow streamlines pattern matching and grouping with minimal syntax, resembling string operations while offering wildcard support.</li>
+<li><strong>Self-Descriptive Filenames</strong>: Each filename serves as a self-descriptive record of data processing steps, aiding in tracking and comprehension. It's like having automatic versioning as filenames adjust with pipeline changes.</li>
+<li><strong>Flexible Filename Control</strong>: Beyond automatic wildcard listing and task execution, users can implement various rules. This includes customizing filename edits (like adding suffixes), renaming, system calls, and task skipping.</li>
+<li><strong>Dask Resource Support</strong>: Harness the power of FileNameFlow's DaskExecutor to execute pipelines on various computational resources by given clusters (e.g. local, PBS, SLURM, ...).</li>
+<li><strong>Python Integration</strong>: FileNameFlow seamlessly integrates with Python. You can use any Python packages you want.</li>
+</ul>
+<p>In summary, FileNameFlow empowers data scientists to efficiently manage, process, and collaborate on data, while simplifying intricate tasks. Its versatility, simplicity, and integration make it an invaluable tool in the data science toolkit.</p>
+<h2 id="installation">Installation</h2>
+<div class="highlight"><pre><span></span><code>pip install git+https://github.com/linnil1/FileNameFlow
+</code></pre></div>
+<h2 id="run">Run</h2>
+<p>Run example</p>
+<div class="highlight"><pre><span></span><code>python example.py
+</code></pre></div>
+<h2 id="document">Document</h2>
+<p>https://linnil1.github.io/FileNameFlow</p>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="filenameflow.error"></a>
+  <div class="doc doc-contents first">
+  
+      <p>Error Class</p>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+<h2 id="filenameflow.error.FileNameFlowAssert" class="doc doc-heading">
+          <code>FileNameFlowAssert</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="filenameflow.error.FileNameFlowError">FileNameFlowError</span></code></p>
+
+  
+      <p>Mostly this is internal error</p>
+
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+<h2 id="filenameflow.error.FileNameFlowDataError" class="doc doc-heading">
+          <code>FileNameFlowDataError</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="filenameflow.error.FileNameFlowError">FileNameFlowError</span></code></p>
+
+  
+      <p>Error in exeution the pipeline</p>
+
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+<h2 id="filenameflow.error.FileNameFlowError" class="doc doc-heading">
+          <code>FileNameFlowError</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+          <p class="doc doc-class-bases">
+            Bases: <code>Exception</code></p>
+
+  
+      <p>Basic exception for FileNameFlow module</p>
+
+
+  </div>
+
+</div>
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="filenameflow.path"></a>
+  <div class="doc doc-contents first">
+  
+      <p>FileNamePath, a core path module of FileNameFlow.</p>
+<p>Handle the path pattern matching rule.</p>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+<h2 id="filenameflow.path.FileNamePath" class="doc doc-heading">
+          <code>FileNamePath</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+          <p class="doc doc-class-bases">
+            Bases: <code>str</code></p>
+
+  
+      <p>FileNamePath is a specialized string class designed for managing filenames.</p>
+
+
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>self</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A string representing the current filename.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>template</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The filename pattern serving as the basis for formatting filenames.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>args</code></td>
+          <td>
+                <code>tuple[str, ...]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A list containing positional arguments used for formatting <code>self</code> based on the <code>template</code>.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>kwargs</code></td>
+          <td>
+                <code><span title="typing.Mapping">Mapping</span>[str, str]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary containing keyword arguments used for formatting <code>self</code> based on the <code>template</code>.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <p>This class extends the functionality of Python's built-in <code>str</code> type.</p>
+<p>Wildcards:
+The FileNamePath class uses <code>{}</code> as wildcard characters and <code>*</code> as value in both args and kwargs.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <ul>
+<li>
+<p>With args:</p>
+<ul>
+<li>self: <code>test.sample.regression.lasso</code></li>
+<li>template: <code>test.{}.regression.{}</code></li>
+<li>args: [<code>"sample", "lasso"]</code></li>
+</ul>
+</li>
+<li>
+<p>With args containing a wildcard:</p>
+<ul>
+<li>self: <code>test.{}.regression.lasso</code></li>
+<li>template: <code>test.{}.regression.{}</code></li>
+<li>args: <code>["*", "lasso"]</code></li>
+</ul>
+</li>
+<li>
+<p>With kwargs:</p>
+<ul>
+<li>self: <code>test.{}.regression.{type}</code></li>
+<li>template: <code>test.{}.regression.{type}</code></li>
+<li>args: <code>["*"]</code></li>
+<li>kwargs: <code>{"type": "*"}</code></li>
+</ul>
+</li>
+</ul>
+</details>
+<details class="features" open>
+  <summary>Features</summary>
+  <p>FileNamePath's primary feature is the ability to list files based on patterns.</p>
+<p><code>FileNamePath("test.{}.regression.lasso").list()</code> will list all files starting with <code>test.*.regression.lasso</code>
+while ignoring the file extension.</p>
+<p>It also excludes files with separators inside wildcards, for instance:</p>
+<ul>
+<li><code>test.sample1.regression.lasso</code> (included in the listing)</li>
+<li><code>test.sample1.regression.lasso.txt</code> (excluded from the listing, the filename without suffix is same as previous one)</li>
+<li><code>test.sample1.regression.lasso.alpha10.txt</code> (excluded from the listing, the filename without suffix is same as previous one)</li>
+<li><code>test.sample2.regression.lasso</code> (included in the listing)</li>
+<li><code>test.sample_bad.sample1.regression.lasso</code> (excluded from the listing)</li>
+</ul>
+<p>After listing, the number of variables in <code>args</code> and <code>kwargs</code> is preserved, but their values change.
+For example, <code>test.sample1.regression.lasso</code> has <code>args</code> set to <code>["sample1"]</code> instead of <code>["*"]</code>.</p>
+<p>Another argument for the <code>list</code> method is <code>fix</code>, which allows you to fix specific variables from the listing.
+Example: <code>FileNamePath("test.{}.regression.{}").list(fix=(0, ))</code> would yield:</p>
+<ul>
+<li><code>test.{}.regression.lasso</code> (with <code>args=["*", "lasso"]</code>)</li>
+<li><code>test.{}.regression.elastic</code></li>
+<li><code>test.{}.regression.rigid</code></li>
+</ul>
+</details>      <p>Operations:</p>
+<ul>
+<li>
+<p><code>replace_wildcard()</code>: Replaces the "{}" wildcard with a specified string (e.g., "_merge").
+  Example: "test.{}.regression" becomes "test_merge.regression".</p>
+</li>
+<li>
+<p><code>+</code>: Concatenates FileNamePath objects.
+  Example: <code>FileNamePath("data.{}.regression") + ".lasso"</code>
+  results in <code>FileNamePath("data.{}.regression.lasso")</code>.
+  Note that args and kwargs are preserved.</p>
+</li>
+<li>
+<p><code>apply()</code>: Applies arguments to the FileNamePath (similar to <code>.format()</code>).
+  Example: <code>FileNamePath("test.{}.regression.lasso").apply(0, "sample1")</code>
+  results in <code>FileNamePath("test.merge.regression.lasso")</code>.</p>
+</li>
+</ul>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.args" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">args</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.kwargs" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">kwargs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">path</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.separator" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">separator</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.suffix_key" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">suffix_key</span> <span class="o">=</span> <span class="s1">&#39;suffix_of_filename_for_filenamepath&#39;</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.template" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.__add__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Concat the path.</p>
+<p>The function carefully handle the value in template, args, kwargs
+after concat.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code>FileNamePath(&quot;a.{}.c&quot;) + &quot;.d&quot;
+# result
+FileNamePath(&quot;a.{}.c.d&quot;)
+</code></pre></div>
+</details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.__radd__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__radd__</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Concat the path</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.__rrshift__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__rrshift__</span><span class="p">(</span><span class="n">others</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>see compose()</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.__rshift__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__rshift__</span><span class="p">(</span><span class="n">others</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>see compose()</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.apply" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">apply</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Similar to .format(),
+but return new FileName Path that keep the template, args, kwargs</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code>self: test.{}.regression.lasso
+template: test.{}.regression.{}
+args: [&quot;*&quot;, &quot;lasso&quot;]
+
+# After .apply(0, &quot;sample2&quot;)
+self: test.sample2.regression.{}
+template: test.{}.regression.{}
+args: [&quot;sample2&quot;, &quot;*&quot;]
+</code></pre></div>
+</details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.applys" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">applys</span><span class="p">(</span><span class="n">kv_pairs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Similar to .apply, but allow apply multiple things</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.commit" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">commit</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Substitue wildcards in the template by values from args and kwargs,
+except the value is wildcard charater '*'.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="n">path</span><span class="p">:</span> <span class="n">test</span><span class="o">.</span><span class="p">{}</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">lasso</span>
+<span class="n">template</span><span class="p">:</span> <span class="n">test</span><span class="o">.</span><span class="p">{}</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="p">{</span><span class="nb">type</span><span class="p">}</span>
+<span class="n">args</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+<span class="n">kwargs</span><span class="p">:</span> <span class="p">{</span><span class="nb">type</span><span class="p">:</span> <span class="s2">&quot;lasso&quot;</span><span class="p">}</span>
+
+<span class="c1"># After .commit()</span>
+<span class="n">path</span><span class="p">:</span> <span class="n">test</span><span class="o">.</span><span class="p">{}</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">lasso</span>
+<span class="n">template</span><span class="p">:</span> <span class="n">test</span><span class="o">.</span><span class="p">{}</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">lasso</span>
+<span class="n">args</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+<span class="n">kwargs</span><span class="p">:</span> <span class="p">{}</span>
+</code></pre></div>
+</details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.construct" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">construct</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Construct a new FileNamePath via template, args, kwargs.
+The filename will be auto generated.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.get_args" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_args</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get arg, kwargs by key (int for positional arg, str for keyword kwargs)</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.is_file" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">is_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Check if the FileNamePath represents a file (no wildcards in the path)</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.list" class="doc doc-heading">
+          <code class="highlight language-python"><span class="nb">list</span><span class="p">(</span><span class="n">fix</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileNamePath</span><span class="p">]</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>List files that match the current(self)'s name.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code>Path: &quot;cohort.{}.regression.{}&quot;
+fix: [1]
+# then Return:
+* `cohort.sample1.regression.{}`
+* `cohort.sample2.regression.{}`
+* `cohort.sample3.regression.{}`
+</code></pre></div>
+</details>
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>fix</code></td>
+          <td>
+                <code><span title="typing.Iterable">Iterable</span>[str | int]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The index of arg, kwargs that keep unlisted.
+     Note that the index is the wildcard's index on path, not the index in template.</p>
+            </div>
+          </td>
+          <td>
+                <code>()</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.list_args" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">list_args</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>List arg, kwargs in this FileNamePath, return a dict-like object</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.overwrite" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">overwrite</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Force to change the value in args or kwargs. see .overwrites</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.overwrites" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">overwrites</span><span class="p">(</span><span class="n">kv_pairs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Force to change the value in args or kwargs.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code>Path: cohort.{}.regression.lasso
+template: cohort.{}.regression.{}
+args: [&quot;*&quot;, &quot;lasso&quot;]
+# after .overwrite(`[(1, &quot;elastic&quot;)]`)
+Path: cohort.{}.regression.elastic
+template: cohort.{}.regression.{}
+args: [&quot;*&quot;, &quot;elastic&quot;]
+</code></pre></div>
+</details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.parse" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">parse</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Parse the filename into arguments and keyword arguments according to self.template.
+The suffix is always removed.
+Returns template, args, kwargs.</p>
+<p>If the filename does not match the template, <code>("", [], {})</code> is returned.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code>path = &quot;test.{}.regression.{type}&quot;
+# After .parse(&quot;test.sample1.regression.lasso.txt&quot;)
+template = &quot;test.{}.regression.{type}&quot;
+args = [&quot;sample1&quot;]
+kwargs = {&quot;type&quot;: &quot;lasso&quot;}
+</code></pre></div>
+</details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.replace_wildcard" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">replace_wildcard</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;_merge&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Replace the wildcard, similar to <code>.replace(".{}", "_merge")</code>.
+After replacment, the arg/kwargs will be removed.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.path.FileNamePath.with_filename" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">with_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span> <span class="o">|</span> <span class="kc">None</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Create a new FileNamePath by filename and extract the args, kwargs by self.template.</p>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="filenameflow.path.FileNamePath">FileNamePath</span> | None</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>FileNamePath | None: A new FileNamePath object if successful, else None.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h2 id="filenameflow.path.unique" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">unique</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_T</span><span class="p">],</span> <span class="n">Hashable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">]</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return a unique sequence.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>arr</code></td>
+          <td>
+                <code><span title="typing.Iterable">Iterable</span>[<span title="filenameflow.path._T">_T</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>An sequence to be unique.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>key</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span>[[<span title="filenameflow.path._T">_T</span>], <span title="typing.Hashable">Hashable</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A function that returns the key of an element.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing.Iterable">Iterable</span>[<span title="filenameflow.path._T">_T</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A unique sequence.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="filenameflow.task"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h2 id="filenameflow.task.FileNameTaskFunc" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">FileNameTaskFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">FileNameTaskOutput</span><span class="p">]</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h2 id="filenameflow.task.FileNameTaskOutput" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">FileNameTaskOutput</span> <span class="o">=</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">FileNamePath</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+<h2 id="filenameflow.task.FileNameTask" class="doc doc-heading">
+          <code>FileNameTask</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+
+  
+      <p>FileNameTask is the basic class that wraps your function to become a step in a pipeline.
+The execution can be triggered by the "&gt;&gt;" operator or using the compose function.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>func</code></td>
+          <td>
+                <code><span title="filenameflow.task.FileNameTaskFunc">FileNameTaskFunc</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A function that defines the task to be performed on given filename (path).</p>
+            </div>
+          </td>
+          <td>
+                <code>lambda : i</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>fix</code></td>
+          <td>
+                <code><span title="typing.Iterable">Iterable</span>[str | int]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A list of integers (for positional arguments) or strings (for keyword arguments)
+        specifying which wildcards to ungroup.</p>
+            </div>
+          </td>
+          <td>
+                <code>()</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>executor</code></td>
+          <td>
+                <code><span title="filenameflow.executor.FileNameBaseExecutor">FileNameBaseExecutor</span> | None</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>An optional custom executor to use for the task.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <p>Example:
+* Usage 1:
+    Wrap the function to FileNameTask Object
+    <div class="highlight"><pre><span></span><code><span class="nd">@FileNameTask</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">fix</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">func_manyto1</span><span class="p">(</span><span class="n">input_name</span><span class="p">,</span> <span class="n">other_arg</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">input_name</span><span class="o">.</span><span class="n">replace_wildcard</span><span class="p">()</span>
+<span class="s2">&quot;data.</span><span class="si">{}</span><span class="s2">.arg1&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">func_manyto1</span>
+<span class="s2">&quot;data.</span><span class="si">{}</span><span class="s2">.arg1&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">func_manyto1</span><span class="p">(</span><span class="n">other_arg</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<ul>
+<li>Usage 2:
+    Execute the task by "&gt;&gt;"
+    <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">func_manyto1</span><span class="p">(</span><span class="n">input_name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">input_name</span><span class="o">.</span><span class="n">replace_wildcard</span><span class="p">()</span>
+
+<span class="s2">&quot;data.</span><span class="si">{}</span><span class="s2">.arg1&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">FileNameTask</span><span class="p">(</span><span class="n">func_manyto1</span><span class="p">,</span> <span class="n">fix</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</code></pre></div></li>
+<li>
+<p>Usage 3:
+    Execute the task by compose
+    <div class="highlight"><pre><span></span><code><span class="n">compose</span><span class="p">([</span>
+    <span class="s2">&quot;data.</span><span class="si">{}</span><span class="s2">.arg1&quot;</span><span class="p">,</span>
+    <span class="n">func_manyto1</span><span class="p">,</span>
+    <span class="n">FileNameTask</span><span class="p">(</span><span class="n">func_manyto1</span><span class="p">)(</span><span class="n">other_arg</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">),</span>  <span class="c1"># or thisw</span>
+    <span class="n">partial</span><span class="p">(</span><span class="n">func_manyto1</span><span class="p">,</span> <span class="n">other_arg</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">),</span>  <span class="c1"># or this</span>
+<span class="p">])</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Usage 4:
+    The output can be got by task.output
+    <div class="highlight"><pre><span></span><code><span class="n">task</span> <span class="o">=</span> <span class="n">compose</span><span class="p">([</span>
+    <span class="s2">&quot;data.</span><span class="si">{}</span><span class="s2">.arg1&quot;</span><span class="p">,</span>
+    <span class="n">func_manyto1</span><span class="p">,</span>
+<span class="p">])</span>
+<span class="n">compose</span><span class="p">([</span>
+    <span class="s2">&quot;data.</span><span class="si">{}</span><span class="s2">.arg2&quot;</span><span class="p">,</span>
+    <span class="n">partial</span><span class="p">(</span><span class="n">func_manyto1</span><span class="p">,</span> <span class="n">other_arg</span><span class="o">=</span><span class="n">task</span><span class="o">.</span><span class="n">output</span><span class="p">),</span>
+<span class="p">])</span>
+</code></pre></div></p>
+</li>
+</ul>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.executor" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">executor</span><span class="p">:</span> <span class="n">FileNameBaseExecutor</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">executor</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.fix" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">fix</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">fix</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.func" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">func</span><span class="p">:</span> <span class="n">FileNameTaskFunc</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">func</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.input_path" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">input_path</span><span class="p">:</span> <span class="n">FileNamePath</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.output" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">output</span><span class="p">:</span> <span class="n">FileNamePath</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get the output path of the task</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.output_path" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">output_path</span><span class="p">:</span> <span class="n">FileNamePath</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.__call__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNameTask</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Fill/Replace function's arguments</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.__deepcopy__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">__deepcopy__</span><span class="p">(</span><span class="n">memo</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNameTask</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Deep copy this Object</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">FileNameTaskFunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="n">fix</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">executor</span><span class="p">:</span> <span class="n">FileNameBaseExecutor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.__repr__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__repr__</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.__rrshift__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__rrshift__</span><span class="p">(</span><span class="n">others</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>see compose()</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.__rshift__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__rshift__</span><span class="p">(</span><span class="n">others</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>see compose()</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.run" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">run</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FileNamePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNameTask</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Main function to excute the function</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.set_default_executor" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">set_default_executor</span><span class="p">(</span><span class="n">executor</span><span class="p">:</span> <span class="n">FileNameBaseExecutor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Change default executor</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.task.FileNameTask.wrapper" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">FileNameTaskFunc</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNameTask</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">FileNameTaskFunc</span><span class="p">],</span> <span class="n">FileNameTask</span><span class="p">]</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A decorator to create a FileNameTask() instance</p>
+<p>Example:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">filenameflow</span> <span class="kn">import</span> <span class="n">FileNameTask</span>
+
+<span class="nd">@FileNameTask</span><span class="o">.</span><span class="n">wrapper</span>
+<span class="k">def</span> <span class="nf">doSomething</span><span class="p">(</span><span class="n">input_name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">input_name</span> <span class="o">+</span> <span class="s2">&quot;.test&quot;</span>
+
+<span class="nd">@FileNameTask</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">fix</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">doSomething1</span><span class="p">(</span><span class="n">input_name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">input_name</span><span class="o">.</span><span class="n">replace_wildcard</span><span class="p">()</span>
+</code></pre></div></p>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h2 id="filenameflow.task.compose" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">compose</span><span class="p">(</span><span class="n">func_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileNameTask</span> <span class="o">|</span> <span class="n">FileNamePath</span> <span class="o">|</span> <span class="n">FileNameTaskFunc</span> <span class="o">|</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">FileNameTask</span> <span class="o">|</span> <span class="n">FileNamePath</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Compose and execute a sequence of tasks in a pipeline.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>func_list</code></td>
+          <td>
+                <code><span title="typing.Iterable">Iterable</span>[<span title="filenameflow.task.FileNameTask">FileNameTask</span> | <span title="filenameflow.path.FileNamePath">FileNamePath</span> | <span title="filenameflow.task.FileNameTaskFunc">FileNameTaskFunc</span> | str]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>An list containing a series of tasks such as FileNameTask, FileNamePath, Function, or filenames(str).</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="filenameflow.task.FileNameTask">FileNameTask</span> | <span title="filenameflow.path.FileNamePath">FileNamePath</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>FileNameTask or FileNamePath: The last task or path in the composed pipeline.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">filenameflow</span> <span class="kn">import</span> <span class="n">compose</span>
+
+<span class="c1"># Execute the tasks based on previous output filenames.</span>
+<span class="c1"># Equivalent to task1 = &quot;.&quot; &gt;&gt; doSomething &gt;&gt; doSomething2</span>
+<span class="n">task1</span> <span class="o">=</span> <span class="n">compose</span><span class="p">([</span>
+    <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">doSomething</span><span class="p">,</span> <span class="n">doSomething2</span>
+<span class="p">])</span>
+
+<span class="c1"># Assert if the output of task1 is equal to the given filename.</span>
+<span class="c1"># Equivalent to task2 = task1 &gt;&gt; &quot;expected_result_path&quot;</span>
+<span class="n">task2</span> <span class="o">=</span> <span class="n">compose</span><span class="p">([</span>
+    <span class="n">task1</span> <span class="p">,</span> <span class="s2">&quot;expected_result_path&quot;</span>
+<span class="p">])</span>
+</code></pre></div>
+</details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="filenameflow.executor"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+<h2 id="filenameflow.executor.DaskExecutor" class="doc doc-heading">
+          <code>DaskExecutor</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="filenameflow.executor.FileNameBaseExecutor">FileNameBaseExecutor</span></code></p>
+
+  
+      <p>Run the filenameflow under <a href="https://www.dask.org/">Dask</a>.</p>
+<p>Dask is convenient resource manager for distributed computing.</p>
+<p>Using this Executor by
+<div class="highlight"><pre><span></span><code>FileNameTask.set_default_executor(DaskExecutor())
+</code></pre></div></p>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+
+<h3 id="filenameflow.executor.DaskExecutor.client" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.executor.DaskExecutor.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">cluster</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.executor.DaskExecutor.run_task" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">run_task</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">FileNameTaskOutput</span><span class="p">],</span> <span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileNamePath</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileNamePath</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Using client.submit to run all tasks</p>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+<h2 id="filenameflow.executor.FileNameBaseExecutor" class="doc doc-heading">
+          <code>FileNameBaseExecutor</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+
+  
+      <p>The FileNameExecutor is a base class for implementing custom task executors within the FileNameFlow framework.</p>
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.executor.FileNameBaseExecutor.post_task" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">post_task</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FileNamePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>This method is called after executing tasks.
+It receives the output FileNamePath and returns the modified FileNamePath.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.executor.FileNameBaseExecutor.pre_task" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">pre_task</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FileNamePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileNamePath</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>This method is called before executing a task.
+It receives the input FileNamePath and returns the modified FileNamePath.</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="filenameflow.executor.FileNameBaseExecutor.run_task" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">run_task</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">FileNameTaskFunc</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileNamePath</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileNameTaskOutput</span><span class="p">]</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>This method is responsible for running the task for each filename with FileNamePath class.
+It yields the results of the task execution.</p>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["toc.integrate"], "search": "assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.78eede0e.min.js"></script>
+      
+    
+  </body>
+</html>
